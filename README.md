@@ -104,7 +104,7 @@ unbabelizer \
   --src-lang en \
   --domain messages \
   --exclude-patterns tests/* docs/* \
-  --mapping-file-content "~/mapping_file.txt" \
+  --mapping-file "~/mapping_file.txt" \
   --line-width 120
 ```
 
@@ -114,7 +114,7 @@ unbabelizer \
 - `--src-lang`: Source language code
 - `--domain`: .po file domain
 - `--exclude-patterns`: Patterns to exclude (optional)
-- `--mapping-file-content`: Babel mapping file content (optional)
+- `--mapping-file`: Babel mapping file (optional)
 - `--line-width`: Line width for .po files (optional)
 
 Settings from the CLI override those in `pyproject.toml`.
