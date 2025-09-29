@@ -22,6 +22,14 @@ It provides a guided interface for developers and translators to:
 
 [![Demo](docs/thumbnail.png)](https://youtu.be/lIy65BAJYbs)
 
+The app is itself available in German language. Simply run
+
+```shell
+LANG=de unbabelizer
+```
+
+to execute the app in German language.
+
 ## Features
 
 - **Interactive TUI:** Edit and review translations in a modern terminal UI
