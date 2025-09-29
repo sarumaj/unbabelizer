@@ -1,0 +1,201 @@
+# German translations for unbabelizer.
+# Copyright (C) 2025 Dawid Ciepiela
+# This file is distributed under the same license as the unbabelizer project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: unbabelizer 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-09-30 00:30+0200\n"
+"PO-Revision-Date: 2025-09-29 21:32+0200\n"
+"Last-Translator: 71898979+sarumaj@users.noreply.github.com\n"
+"Language-Team: de <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.17.0\n"
+
+msgid "<empty>"
+msgstr "<leer>"
+
+msgid "Aborted without saving any changes."
+msgstr "\n"
+
+msgid "All translation files cleared."
+msgstr "Alle Übersetzungsdateien gelöscht."
+
+#, fuzzy, python-brace-format
+msgid "An error occurred: {error}"
+msgstr "Es ist ein Fehler aufgetreten: {traceback} {TraceBack}"
+
+msgid "Are you sure? This action cannot be undone."
+msgstr "Bist du sicher? Diese Aktion kann nicht rückgängig gemacht werden."
+
+msgid "Cancel"
+msgstr "Stornieren"
+
+msgid "Clear translation files"
+msgstr "Übersetzungsdateien löschen"
+
+msgid "Compilation completed."
+msgstr "Zusammenstellung abgeschlossen."
+
+msgid "Compile"
+msgstr "Kompilieren"
+
+msgid "Edit Selected"
+msgstr "Ausgewählt bearbeiten"
+
+#, python-brace-format
+msgid "Editing: \"{msgid}\" [{idx}]"
+msgstr "Bearbeitung: \"{idx}\" [{idx}]"
+
+msgid "Extract and Update"
+msgstr "Extrahieren und aktualisieren"
+
+msgid "Extraction and update completed."
+msgstr "Extraktion und Update abgeschlossen."
+
+#, fuzzy
+msgid "Filter entries (use * and ? as wildcards)."
+msgstr "Filtereinträge (verwenden Sie * und? Als Platzhalter)"
+
+msgid "Filter rows"
+msgstr "Filterreihen"
+
+msgid "MsgId"
+msgstr "Msgid"
+
+msgid "MsgStr"
+msgstr "Msgstr"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Override existing translations"
+msgstr "Übersetzen vorhandene Übersetzungen"
+
+#, python-brace-format
+msgid "PO file saved to \"{path}\"."
+msgstr "PO-Datei in \"{path}\" gespeichert."
+
+msgid "Quit"
+msgstr "Aufhören"
+
+msgid "Quit and Save"
+msgstr "Kündigen und speichern"
+
+msgid "Quit without Saving"
+msgstr "Aufhören, ohne zu retten"
+
+msgid "Review"
+msgstr "Rezension"
+
+msgid "Run Workflow"
+msgstr "Workflow ausführen"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Select target language"
+msgstr "Wählen Sie Zielsprache"
+
+msgid "Submit"
+msgstr "Einreichen"
+
+#, python-brace-format
+msgid "Table column \"{column}\" filtered with \"{pattern}\"."
+msgstr "Tabellenspalte \"{pattern}\" mit \"{muster}\" gefiltert."
+
+msgid "Target language"
+msgstr "Zielsprache"
+
+msgid "Toggle Override Existing"
+msgstr "Toggle Override vorhanden"
+
+msgid "Translate"
+msgstr "Übersetzen"
+
+msgid ""
+"Translating PO file... This may take a while depending on the file size."
+msgstr ""
+"Übersetzen der PO-Datei... Dies kann eine Weile dauern, abhängig von der "
+"Dateigröße."
+
+msgid "Translation Workflow"
+msgstr "Übersetzungsworkflow"
+
+msgid "Translation completed and PO file saved."
+msgstr "Übersetzung abgeschlossen und PO-Datei gespeichert."
+
+#, fuzzy, python-brace-format
+msgid ""
+"Translation updated.)+\"\n"
+"\"+ _(\"Previous value was: \"{old_value}\", current value is: \"{new_value}\"."
+msgstr ""
+"Übersetzung aktualisiert. Der frühere Wert war: \"{new_value}\", der "
+"aktuelle Wert lautet: \"{new_value}\"."
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "⌛ Translation Completed"
+msgstr "⌛ Übersetzung abgeschlossen"
+
+msgid "⏳ Translation Started"
+msgstr "⏳ Übersetzung begann"
+
+msgid "⚠️ Aborted"
+msgstr "⚠️ abgebrochen"
+
+msgid "⛔ Unexpected Error"
+msgstr "⛔ Unerwarteter Fehler"
+
+msgid "✅ Success"
+msgstr "✅ Erfolg"
+
+#~ msgid "Aborted"
+#~ msgstr "Abgebrochen"
+
+#~ msgid "Success"
+#~ msgstr "Erfolg"
+
+#~ msgid "Translation Completed"
+#~ msgstr "Übersetzung abgeschlossen"
+
+#~ msgid "Translation Started"
+#~ msgstr "Übersetzung begann"
+
+#~ msgid "Unexpected error"
+#~ msgstr "Unerwarteter Fehler"
+
+#~ msgid "Editing: {msgid} [{idx}]"
+#~ msgstr "Bearbeitung: {idx} [{idx}]"
+
+#~ msgid "PO file saved to {path}."
+#~ msgstr "PO-Datei in {path} gespeichert."
+
+#~ msgid "Table column {column} filtered with '{pattern}'."
+#~ msgstr "Tabellenspalte {pattern} filtriert mit '{Muster}'."
+
+#~ msgid ""
+#~ "Translation updated.\n"
+#~ "Previous value was: {old_value}, current value is: {new_value}."
+#~ msgstr ""
+#~ "Übersetzung aktualisiert. Der frühere Wert war: {new_value}, der aktuelle "
+#~ "Wert ist: {new_value}."
+
+#~ msgid "Double press ENTER key to save."
+#~ msgstr ""
+
+#~ msgid "Write \\n for newline, \\t for tab."
+#~ msgstr ""
+
+#~ msgid "Press ENTER key to save. Write \\n for newline, \\t for tab."
+#~ msgstr ""
+
+#~ msgid "Press ENTER key to save. Write \"%0A\" for newline, \"%09\" for tab."
+#~ msgstr ""
