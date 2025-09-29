@@ -20,7 +20,7 @@ It provides a guided interface for developers and translators to:
 
 ## Demo
 
-[![Demo](docs/thumbnail.png)](docs/demo.mp4)
+[![Demo](docs/thumbnail.png)](https://youtu.be/lIy65BAJYbs)
 
 ## Features
 
