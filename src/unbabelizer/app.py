@@ -133,7 +133,18 @@ class UnbabelizerApp(App[None]):
 
             self.logger.info("Clearing translation files...", extra={"context": "unbabelizerApp.clear"})
             with NotifyException(self):
-                map(lambda p: p.unlink(True), self._config.locale_dir.rglob("**/*.*"))
+                for path in self._config.locale_dir.rglob("*"):
+                    if path.is_file():
+                        self.logger.debug("Removing file", extra={"path": path, "context": "unbabelizerApp.clear"})
+                        path.unlink()
+
+                for path in self._config.locale_dir.rglob("*"):
+                    if path.is_dir() and not any(path.iterdir()):
+                        self.logger.debug(
+                            "Removing empty directory", extra={"path": path, "context": "unbabelizerApp.clear"}
+                        )
+                        path.rmdir()
+
                 self.notify(_("All translation files cleared."), timeout=3, title=_("✅ Success"))
                 self.logger.info("Translation files cleared.", extra={"context": "unbabelizerApp.clear"})
 

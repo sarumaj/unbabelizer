@@ -9,17 +9,17 @@ from .types import SingletonType
 class Logger(logging.LoggerAdapter[Any], metaclass=SingletonType):
     """A singleton logger class for the application."""
 
-    def __init__(self, log_name: str = "babylizer", log_level: int = logging.DEBUG):
+    def __init__(self, log_name: str = "unbabelizer", log_level: int = logging.DEBUG):
         logger = logging.getLogger(log_name)
         logger.setLevel(log_level)
 
         formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
-        log_dir = Path.home() / ".babylizer"
+        log_dir = Path.home() / ".unbabelizer"
         log_dir.mkdir(parents=True, exist_ok=True)
 
         fh = logging.handlers.RotatingFileHandler(
-            log_dir / "babylizer.log",
+            log_dir / "unbabelizer.log",
             maxBytes=20 * 1024**2,  # 20 MB
             backupCount=1,
         )

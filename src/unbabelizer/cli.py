@@ -1,5 +1,14 @@
+import gettext
 import sys
 import traceback
+from gettext import gettext as _
+from pathlib import Path
+
+gettext.bindtextdomain(
+    "messages",
+    (Path(__file__).parent / "locales").resolve(),
+)
+
 
 from .app import UnbabelizerApp
 from .config import Config, logger

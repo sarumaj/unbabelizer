@@ -130,9 +130,11 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         old_value = table.get_cell_at(coordinate)
         table.update_cell_at(coordinate, result, update_width=True)
         self.notify(
-            _(
-                'Translation updated.)+"\n"+ _("Previous value was: "{old_value}", current value is: "{new_value}".'
-            ).format(old_value=old_value or _("<empty>"), new_value=result or _("<empty>")),
+            _("Translation updated.")
+            + "\n"
+            + _('Previous value was: "{old_value}", current value is: "{new_value}".').format(
+                old_value=old_value or _("<empty>"), new_value=result or _("<empty>")
+            ),
             timeout=2,
             title=_("✅ Success"),
         )
@@ -232,7 +234,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
                 self.notify(
                     _("Aborted without saving any changes."),
                     timeout=2,
-                    title=_("⚠️ Aborted"),
+                    title=_("⚠️  Aborted"),
                 )
             else:
                 self.logger.info(
