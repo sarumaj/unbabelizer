@@ -1,5 +1,6 @@
 import asyncio
 import re
+import traceback
 from contextlib import AbstractContextManager
 from gettext import gettext as _
 from types import TracebackType
@@ -43,7 +44,7 @@ class NotifyException(AbstractContextManager["NotifyException"]):
         self,
         exc_type: Optional[Type[BaseException]],
         exc_instance: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_traceback: Optional[TracebackType],
     ) -> Optional[bool]:
         if exc_instance:
             self.notifier.notify(
@@ -58,7 +59,7 @@ class NotifyException(AbstractContextManager["NotifyException"]):
                 extra={
                     "context": "NotifyException.__exit__",
                     "error": str(exc_instance),
-                    "traceback": str(traceback),
+                    "traceback": traceback.format_tb(exc_traceback) if exc_traceback else "No traceback",
                     "type": str(exc_type),
                 },
             )
