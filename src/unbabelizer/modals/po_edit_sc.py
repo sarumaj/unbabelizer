@@ -8,7 +8,7 @@ from textual.screen import ModalScreen
 from textual.widgets import Footer, Input, Static
 
 from ..log import Logger
-from ..utils import apply_styles, wait_for_element
+from ..utils import apply_styles, escape_control_chars, unescape_control_chars, wait_for_element
 
 
 class POEditScreen(ModalScreen[str]):
@@ -85,7 +85,7 @@ class POEditScreen(ModalScreen[str]):
             (
                 Static(
                     _('Editing: "{msgid}" [{idx}]').format(
-                        msgid=(
+                        msgid=escape_control_chars(
                             self.entry.msgid  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
                             if self.idx is None
                             else self.entry.msgid_plural  # pyright: ignore[reportUnknownMemberType]
@@ -104,7 +104,7 @@ class POEditScreen(ModalScreen[str]):
         yield apply_styles(
             Input(
                 valid_empty=True,
-                value=value,  # pyright: ignore[reportUnknownArgumentType]
+                value=escape_control_chars(value),  # pyright: ignore[reportUnknownArgumentType]
             ),
             width="1fr",
             vertical="top",
@@ -144,10 +144,11 @@ class POEditScreen(ModalScreen[str]):
             return
 
         new_val = (await wait_for_element(lambda: self.query_one(Input))).value.strip()
+        orig_val = unescape_control_chars(new_val)
         if self.idx is None:
-            self.entry.msgstr = new_val
+            self.entry.msgstr = orig_val
         else:
-            self.entry.msgstr_plural[self.idx] = new_val  # pyright: ignore[reportUnknownMemberType]
+            self.entry.msgstr_plural[self.idx] = orig_val  # pyright: ignore[reportUnknownMemberType]
 
         self.dismiss(new_val)
         self.logger.info(
@@ -156,6 +157,7 @@ class POEditScreen(ModalScreen[str]):
                 "entry": str(self.entry),
                 "idx": self.idx,
                 "new_value": new_val,
+                "original_value": orig_val,
                 "context": "POEditScreen.update_cell",
             },
         )

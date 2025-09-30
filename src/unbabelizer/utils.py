@@ -108,11 +108,62 @@ def correct_translation(msgid: str, translation: str) -> str:
     return translation.strip()
 
 
+def escape_control_chars(text: str) -> str:
+    """Escape control characters using character class pattern"""
+
+    def replace_func(match: re.Match[str]) -> str:
+        char = match.group(0)
+        escape_map = {
+            "\n": "\\n",  # new line
+            "\r": "\\r",  # carriage return
+            "\t": "\\t",  # tab
+            "\b": "\\b",  # backspace
+            "\f": "\\f",  # form feed
+            "\v": "\\v",  # vertical tab
+            "\a": "\\a",  # bell/alert
+            "\\": "\\\\",  # backslash
+            "\0": "\\0",  # null character
+        }
+        return escape_map.get(char, f"\\x{ord(char):02x}")
+
+    return re.sub(r"[\n\r\t\b\f\v\a\\\x00]", replace_func, text)
+
+
 def run_babel_cmd(args: Sequence[str]):
     """Run a Babel command with the given arguments."""
     cli = CommandLineInterface()
     print("Running Babel command with args:", args)
     cli.run(["pybabel", *args])  # pyright: ignore[reportUnknownMemberType]
+
+
+def unescape_control_chars(text: str) -> str:
+    """Unescape control chars including hex notation"""
+
+    def replace(match: re.Match[str]) -> str:
+        esc = match.group(0)
+        if esc == r"\n":
+            return "\n"
+        if esc == r"\r":
+            return "\r"
+        if esc == r"\t":
+            return "\t"
+        if esc == r"\b":
+            return "\b"
+        if esc == r"\f":
+            return "\f"
+        if esc == r"\v":
+            return "\v"
+        if esc == r"\a":
+            return "\a"
+        if esc == r"\0":
+            return "\0"
+        if esc == r"\\":
+            return "\\"
+        if esc.startswith(r"\x"):
+            return chr(int(esc[2:], 16))
+        return esc  # fallback
+
+    return re.sub(r"\\n|\\r|\\t|\\b|\\f|\\v|\\a|\\0|\\\\|\\x[0-9a-fA-F]{2}", replace, text)
 
 
 async def wait_for_element(
