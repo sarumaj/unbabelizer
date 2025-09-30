@@ -76,6 +76,11 @@ class Config(BaseModel):
             "argparse": "--line-width",
         },
     )
+    keywords: List[str] = Field(
+        default=[],
+        description="Additional keywords to look for in source files",
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.keywords", "argparse": "--keywords"},
+    )
 
     @classmethod
     def source_cli_args(cls, args: List[str]) -> Dict[str, Any]:
@@ -124,7 +129,7 @@ class Config(BaseModel):
                 "pyproject.toml", name
             )
             value = jmespath.search(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-                jmespath_query, pyproject_data
+                jmespath_query, pyproject_data  # pyright: ignore[reportArgumentType]c
             )
             logger.debug(
                 "JMESPath query result",

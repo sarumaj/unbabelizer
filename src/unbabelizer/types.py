@@ -36,7 +36,7 @@ class POFileHandler:
         """Set the PO file."""
         if isinstance(value, Path):
             file = polib.pofile(str(value))  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-            if isinstance(file, polib.POFile):
+            if isinstance(file, polib.POFile):  # pyright: ignore[reportUnnecessaryIsInstance]
                 self._po = file
             else:
                 raise ValueError(f"Failed to load PO file from path: {value}")
