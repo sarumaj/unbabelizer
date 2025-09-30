@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,12 @@ class Logger(logging.LoggerAdapter[Any], metaclass=SingletonType):
         log_dir = Path.home() / ".unbabelizer"
         log_dir.mkdir(parents=True, exist_ok=True)
 
+        fs = logging.StreamHandler(sys.stderr)
+        fs.setLevel(logging.INFO)
+        fs.setFormatter(formatter)
+        fs.addFilter(lambda record: record.levelno >= logging.ERROR)
+        logger.addHandler(fs)
+
         fh = logging.handlers.RotatingFileHandler(
             log_dir / "unbabelizer.log",
             maxBytes=20 * 1024**2,  # 20 MB
@@ -32,4 +39,5 @@ class Logger(logging.LoggerAdapter[Any], metaclass=SingletonType):
     def process(self, msg: str, kwargs: Any):
         if "extra" in kwargs:
             msg = f"{msg} - {str(kwargs['extra'])}"
+        return msg, kwargs
         return msg, kwargs

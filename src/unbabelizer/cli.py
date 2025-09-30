@@ -4,14 +4,13 @@ import traceback
 from gettext import gettext as _
 from pathlib import Path
 
+from .app import UnbabelizerApp
+from .config import Config, logger
+
 gettext.bindtextdomain(
     "messages",
     (Path(__file__).parent / "locales").resolve(),
 )
-
-
-from .app import UnbabelizerApp
-from .config import Config, logger
 
 
 def main(args: list[str] | None = None):
