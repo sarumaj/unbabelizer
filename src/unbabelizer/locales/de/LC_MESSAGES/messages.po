@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: unbabelizer 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-09-30 09:00+0200\n"
-"PO-Revision-Date: 2025-09-30 00:45+0200\n"
+"POT-Creation-Date: 2025-09-30 09:39+0200\n"
+"PO-Revision-Date: 2025-09-30 09:39+0200\n"
 "Last-Translator: 71898979+sarumaj@users.noreply.github.com\n"
 "Language-Team: de <LL@li.org>\n"
 "Language: de\n"
@@ -52,7 +52,7 @@ msgstr "Ausgewählt bearbeiten"
 
 #, python-brace-format
 msgid "Editing: \"{msgid}\" [{idx}]"
-msgstr "Bearbeitung: \"{idx}\" [{idx}]"
+msgstr "Bearbeitung: \"{msgid}\" [{idx}]"
 
 msgid "Extract and Update"
 msgstr "Extrahieren und aktualisieren"
@@ -150,7 +150,7 @@ msgid "⏳ Translation Started"
 msgstr "⏳ Übersetzung begann"
 
 msgid "⚠️  Aborted"
-msgstr "⚠️  Abgebrochen"
+msgstr "⚠️ abgebrochen"
 
 msgid "⛔ Unexpected Error"
 msgstr "⛔ Unerwarteter Fehler"

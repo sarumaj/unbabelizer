@@ -1,3 +1,9 @@
+[![release](https://github.com/sarumaj/unbabelizer/actions/workflows/release.yml/badge.svg)](https://github.com/sarumaj/unbabelizer/actions/workflows/release.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/sarumaj/unbabelizer?logo=github)](https://github.com/sarumaj/unbabelizer/releases/latest)
+[![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/sarumaj/unbabelizer)](https://github.com/sarumaj/unbabelizer/blob/main/pyproject.toml)
+
+---
+
 # unbabelizer
 
 `unbabelizer` is an interactive CLI and TUI (Text User Interface) tool for
@@ -20,7 +26,7 @@ It provides a guided interface for developers and translators to:
 
 ## Demo
 
-[![Demo](docs/thumbnail.png)](https://youtu.be/lIy65BAJYbs)
+[![Asciinema Recording](docs/thumbnail.png)](https://asciinema.org/a/ZKhYGHJ5AIi7MwEYCpWD64oFG)
 
 The app is itself available in German language. Simply run
 
