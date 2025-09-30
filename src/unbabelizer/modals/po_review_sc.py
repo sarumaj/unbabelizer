@@ -13,7 +13,7 @@ from textual.widgets import DataTable, Footer, Header
 
 from ..log import Logger
 from ..types import POFileHandler, TableCell
-from ..utils import apply_styles, escape_control_chars, wait_for_element
+from ..utils import NotifyException, apply_styles, escape_control_chars, wait_for_element
 from .confirm_inevitable import ConfirmInevitable
 from .po_edit_sc import POEditScreen
 
@@ -182,10 +182,11 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
 
         table.clear()
         for cell in self.generate_cells():
-            if not fnmatch(cell[selected_col], result):
-                continue
+            with NotifyException(self):
+                if not fnmatch(cell[selected_col], result):
+                    continue
 
-            table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
+                table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
 
         self.notify(
             _('Table column "{column}" filtered with "{pattern}".').format(column=column_name, pattern=result),
