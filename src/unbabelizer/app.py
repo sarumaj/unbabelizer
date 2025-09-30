@@ -232,6 +232,7 @@ class UnbabelizerApp(App[None]):
                 + ["-d", str(self._config.locale_dir)]
                 + ["-l", self._config.dest_lang[self._current_lang_idx]]
                 + ["-w", str(self._config.line_width)]
+                + ["--init-missing"]
             )
         else:
             self.logger.debug(
