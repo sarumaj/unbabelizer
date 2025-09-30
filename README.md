@@ -18,8 +18,8 @@ The main goal of `unbabelizer` is to simplify and automate the process of
 internationalizing Python applications.
 It provides a guided interface for developers and translators to:
 
-- Extract translatable strings from source code.
-- Automatically translate `.po` files using Google Translate.
+- Extract translatable strings from source code using `babel`.
+- Automatically translate `.po` files using `Google Translate`.
 - Review and edit translations interactively.
 - Compile `.po` files into binary `.mo` files for deployment.
 - Manage multiple languages and domains with ease.
