@@ -202,8 +202,7 @@ class UnbabelizerApp(App[None]):
                 )
 
                 self.logger.debug(
-                    "Running Babel extract command",
-                    extra={"context": "unbabelizerApp.flow_extract_and_update"},
+                    "Running Babel extract command", extra={"context": "unbabelizerApp.flow_extract_and_update"}
                 )
 
                 run_babel_cmd(
@@ -212,12 +211,16 @@ class UnbabelizerApp(App[None]):
                     + ["--version", self._config.version]
                     + ["--copyright-holder", self._config.author]
                     + ["--last-translator", self._config.email]
-                    + ["--no-location"]
                     + ["--sort-output"]
                     + ["-F", str(mapping_file.resolve())]
                     + ["-o", str(self.potfile_path)]
-                    + ["--ignore-dirs", *(ex for ex in self._config.exclude_patterns)]
-                    + ["--input-paths", *(str(i.resolve()) for i in self._config.input_paths)]
+                    + [f"--keywords={kw}" for kw in self._config.keywords]
+                    + (
+                        ["--ignore-dirs", *(ex for ex in self._config.exclude_patterns)]
+                        + ["--input-paths", *(str(i.resolve()) for i in self._config.input_paths)]
+                        if self._config.exclude_patterns
+                        else [str(i.resolve()) for i in self._config.input_paths]
+                    )
                 )
                 mapping_file.unlink()
 
@@ -235,6 +238,7 @@ class UnbabelizerApp(App[None]):
                         + ["-l", self._config.dest_lang[self._current_lang_idx]]
                         + ["-w", str(self._config.line_width)]
                         + ["--init-missing"]
+                        + ["--ignore-pot-creation-date"]
                     )
                 else:
                     self.logger.debug(

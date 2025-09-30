@@ -2,7 +2,7 @@ import asyncio
 from gettext import gettext as _
 from pathlib import Path
 
-from googletrans import Translator as GoogleTranslator
+from googletrans import Translator as GoogleTranslator  # pyright: ignore[reportMissingTypeStubs]
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
