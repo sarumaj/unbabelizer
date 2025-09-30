@@ -13,7 +13,7 @@ from textual.widgets import DataTable, Footer, Header
 
 from ..log import Logger
 from ..types import POFileHandler, TableCell
-from ..utils import apply_styles, wait_for_element
+from ..utils import apply_styles, escape_control_chars, wait_for_element
 from .confirm_inevitable import ConfirmInevitable
 from .po_edit_sc import POEditScreen
 
@@ -83,10 +83,15 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         """
         for no, (entry, idx) in enumerate(self.entries):
             if idx is None:
-                yield TableCell(f"{no}", "Singular", entry.msgid, entry.msgstr)
+                yield TableCell(
+                    f"{no}", "Singular", escape_control_chars(entry.msgid), escape_control_chars(entry.msgstr)
+                )
             else:
                 yield TableCell(
-                    f"{no}", f"Plural[{idx}]", entry.msgid if idx == 0 else entry.msgid_plural, entry.msgstr_plural[idx]
+                    f"{no}",
+                    f"Plural[{idx}]",
+                    escape_control_chars(entry.msgid if idx == 0 else entry.msgid_plural),
+                    escape_control_chars(entry.msgstr_plural[idx]),
                 )
 
     def compose(self) -> ComposeResult:
@@ -128,7 +133,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         table: DataTable[str] = self.query_one(DataTable)  # pyright: ignore[reportUnknownVariableType]
         coordinate = Coordinate(table.cursor_row, len(table.columns) - 1)
         old_value = table.get_cell_at(coordinate)
-        table.update_cell_at(coordinate, result, update_width=True)
+        table.update_cell_at(coordinate, escape_control_chars(result), update_width=True)
         self.notify(
             _("Translation updated.")
             + "\n"
@@ -163,10 +168,17 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
             return
 
         self.logger.debug("Filtering table", extra={"pattern": result, "context": "POReviewScreen.filter"})
+
+        tmp_table = DataTable[str](zebra_stripes=True)
+        tmp_table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"))
+        for cell in self.generate_cells():
+            tmp_table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
+
         table: DataTable[str] = self.query_one(DataTable)  # pyright: ignore[reportUnknownVariableType]
         selected_col = table.cursor_column
-        cell_key = table.coordinate_to_cell_key(Coordinate(0, selected_col))
-        column_name = table.columns[cell_key.column_key].label
+
+        cell_key = tmp_table.coordinate_to_cell_key(Coordinate(0, selected_col))
+        column_name = tmp_table.columns[cell_key.column_key].label
 
         table.clear()
         for cell in self.generate_cells():
