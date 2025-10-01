@@ -2,10 +2,12 @@ import asyncio
 import re
 import traceback
 from contextlib import AbstractContextManager
+from functools import lru_cache
 from gettext import gettext as _
 from types import TracebackType
 from typing import Callable, Literal, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar
 
+from babel import localedata, negotiate_locale
 from babel.messages.frontend import CommandLineInterface
 from textual.notifications import SeverityLevel
 from textual.widget import Widget
@@ -128,6 +130,22 @@ def escape_control_chars(text: str) -> str:
         return escape_map.get(char, f"\\x{ord(char):02x}")
 
     return re.sub(r"[\n\r\t\b\f\v\a\\\x00]", replace_func, text)
+
+
+@lru_cache
+def negotiate_language(lang: str) -> str:
+    """Negotiate the best matching language from a list of available languages.
+
+    Args:
+        lang (str): The desired language code.
+    Returns:
+        str: The best matching language code or the default if no match is found.
+    """
+    best_match = negotiate_locale(lang, localedata.locale_identifiers())
+    if best_match is None or lang not in best_match:
+        return lang
+
+    return best_match
 
 
 def run_babel_cmd(args: Sequence[str]):

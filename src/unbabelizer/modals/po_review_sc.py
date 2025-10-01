@@ -5,7 +5,7 @@ from typing import Any, Generator, List, Tuple
 
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Container
+from textual.containers import ScrollableContainer
 from textual.coordinate import Coordinate
 from textual.events import Key
 from textual.screen import ModalScreen
@@ -101,7 +101,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"))
         for cell in self.generate_cells():
             table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
-        yield apply_styles(Container(table), width="1fr", height="1fr")
+        yield apply_styles(ScrollableContainer(table), width="1fr", height="1fr")
         yield Footer()
 
     async def on_key(self, event: Key):

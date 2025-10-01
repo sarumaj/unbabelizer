@@ -2,18 +2,15 @@ import argparse
 import sys
 import tomllib
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import jmespath
 from pydantic import BaseModel, Field
 
 from .log import Logger
+from .types import TranslationServiceConfig
 
 logger = Logger()
-
-
-class CliArgument(dict[str, Any]):
-    pass
 
 
 class Config(BaseModel):
@@ -21,66 +18,117 @@ class Config(BaseModel):
 
     author: str = Field(
         description="Author of the project",
-        json_schema_extra={"pyproject.toml": "project.authors[0].name", "argparse": "--author"},
+        json_schema_extra={"pyproject.toml": "project.authors[0].name", "argparse.flag": "--author"},
     )
     email: str = Field(
         description="Email of the author",
-        json_schema_extra={"pyproject.toml": "project.authors[0].email", "argparse": "--email"},
+        json_schema_extra={"pyproject.toml": "project.authors[0].email", "argparse.flag": "--email"},
     )
     version: str = Field(
         description="Version of the project",
-        json_schema_extra={"pyproject.toml": "project.version", "argparse": "--version"},
+        json_schema_extra={"pyproject.toml": "project.version", "argparse.flag": "--version"},
     )
     title: str = Field(
-        description="Title of the project", json_schema_extra={"pyproject.toml": "project.name", "argparse": "--title"}
+        description="Title of the project",
+        json_schema_extra={"pyproject.toml": "project.name", "argparse.flag": "--title"},
     )
     locale_dir: Path = Field(
         default=Path("locale"),
         description="Directory for locale files",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.locale_dir", "argparse": "--locale-dir"},
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.locale_dir", "argparse.flag": "--locale-dir"},
     )
     input_paths: List[Path] = Field(
         default=[Path.cwd()],
         description="Paths to search for source files",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.input_paths", "argparse": "--input-paths"},
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.input_paths", "argparse.flag": "--input-paths"},
     )
     exclude_patterns: List[str] = Field(
         default=[],
         description="Paths to exclude from searching",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.exclude_patterns", "argparse": "--exclude-patterns"},
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.exclude_patterns",
+            "argparse.flag": "--exclude-patterns",
+        },
     )
     src_lang: str = Field(
         default="en",
         description="Source language code",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.src_lang", "argparse": "--src-lang"},
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.src_lang", "argparse.flag": "--src-lang"},
     )
     dest_lang: List[str] = Field(
         description="Destination language code",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.dest_lang", "argparse": "--dest-lang"},
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.dest_lang", "argparse.flag": "--dest-lang"},
     )
     domain: str = Field(
         default="messages",
         description="Domain for the .po files",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.domain", "argparse": "--domain"},
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.domain", "argparse.flag": "--domain"},
     )
     mapping_file: str = Field(
         default="[python: **.py]\nencoding = utf-8\n",
         description="Content of the Babel mapping file",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.mapping_file_content", "argparse": "--mapping-file"},
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.mapping_file_content",
+            "argparse.flag": "--mapping-file",
+        },
     )
     line_width: int = Field(
         default=120,
         description="Line width for .po files",
         json_schema_extra={
             "pyproject.toml": "tool.unbabelizer.line_width",
-            "argparse": "--line-width",
+            "argparse.flag": "--line-width",
         },
     )
     keywords: List[str] = Field(
         default=[],
         description="Additional keywords to look for in source files",
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.keywords", "argparse": "--keywords"},
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.keywords", "argparse.flag": "--keywords"},
     )
+    http_proxy: Optional[str] = Field(
+        default=None,
+        description="HTTP proxy URL",
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.proxy_http", "argparse.flag": "--http-proxy"},
+    )
+    https_proxy: Optional[str] = Field(
+        default=None,
+        description="HTTPS proxy URL",
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.proxy_https", "argparse.flag": "--https-proxy"},
+    )
+    api_key: Optional[str] = Field(
+        default=None,
+        description="API key for the translation service, if required",
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.api_key", "argparse.flag": "--api-key"},
+    )
+    model: Optional[str] = Field(
+        default=None,
+        description="Model to use for the translation service, if applicable",
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.model", "argparse.flag": "--model"},
+    )
+    region: Optional[str] = Field(
+        default=None,
+        description="Region for the translation service, if applicable",
+        json_schema_extra={"pyproject.toml": "tool.unbabelizer.region", "argparse.flag": "--region"},
+    )
+
+    def get_translation_config(self, dest_lang_index: int) -> TranslationServiceConfig:
+        """Prepare the configuration dictionary for the translation service."""
+        return {
+            "source": self.src_lang,
+            "target": self.dest_lang[dest_lang_index],
+            "api_key": self.api_key,
+            "proxies": {
+                k: v
+                for k, v in {
+                    "http": self.http_proxy,
+                    "https": self.https_proxy,
+                }.items()
+                if v is not None
+            }
+            or None,
+            "model": self.model,
+            "region": self.region,
+        }
 
     @classmethod
     def source_cli_args(cls, args: List[str]) -> Dict[str, Any]:
@@ -92,15 +140,22 @@ class Config(BaseModel):
                 if isinstance(field.json_schema_extra, dict)
                 else {}
             )
+            base_type = getattr(field.annotation, "__args__", [field.annotation])[0]
             flag = schema.get(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-                "argparse", f"--{name.replace('_', '-')}"
+                "argparse.flag", f"--{name.replace('_', '-')}"
             )
+            choices = schema.get(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+                "argparse.choices", None
+            )
+            if choices is not None and not isinstance(choices, list):
+                choices = [choices]  # pyright: ignore[reportUnknownVariableType]
             parser.add_argument(
                 flag,  # pyright: ignore[reportArgumentType]
                 help=field.description or "",
                 default=None,
                 nargs=None if field.annotation is not list else "+",
-                type=field.annotation if field.annotation is not None else str,
+                type=base_type,
+                choices=choices,  # pyright: ignore[reportUnknownArgumentType]
             )
 
         parsed_args = parser.parse_args(args)

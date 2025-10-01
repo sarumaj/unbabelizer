@@ -1,7 +1,7 @@
 from enum import Enum
 from gettext import gettext as _
 from pathlib import Path
-from typing import Any, Dict, NamedTuple, Protocol, Tuple, Type
+from typing import Any, Dict, NamedTuple, Protocol, Tuple, Type, TypedDict
 
 import polib
 from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
@@ -13,102 +13,92 @@ from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
 )
 
 
-class GoogleTranslationService(GoogleTranslator):
-    def __init__(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ):
-        _ = (model, region, api_key)  # Unused
-        super().__init__(source=source, target=target, proxies=proxies)  # pyright: ignore[reportUnknownMemberType]
+class TranslationServiceConfig(TypedDict):
+    source: str
+    target: str
+    api_key: str | None
+    proxies: dict[str, str] | None
+    model: str | None
+    region: str | None
 
-    @classmethod
-    def needs_proxies(cls) -> bool:
-        return True
+
+class GoogleTranslationService(GoogleTranslator):
+    def __init__(self, config: TranslationServiceConfig):
+        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+            source=config["source"], target=config["target"], proxies=config["proxies"]
+        )
 
     @classmethod
     def needs_api_key(cls) -> bool:
         return False
 
     @classmethod
-    def needs_model(cls) -> bool:
+    def supports_model(cls) -> bool:
         return False
 
     @classmethod
-    def needs_region(cls) -> bool:
+    def supports_region(cls) -> bool:
         return False
+
+    @classmethod
+    def supports_proxies(cls) -> bool:
+        return True
 
     async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
         return super().translate(text)  # pyright: ignore[reportUnknownMemberType]
 
 
 class MyMemoryTranslationService(MyMemoryTranslator):
-    def __init__(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ):
-        _ = (model, region, api_key)  # Unused
-        super().__init__(source=source, target=target, proxies=proxies)  # pyright: ignore[reportUnknownMemberType]
-
-    @classmethod
-    def needs_proxies(cls) -> bool:
-        return True
+    def __init__(self, config: TranslationServiceConfig):
+        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+            source=config["source"], target=config["target"], proxies=config["proxies"]
+        )
 
     @classmethod
     def needs_api_key(cls) -> bool:
         return False
 
     @classmethod
-    def needs_model(cls) -> bool:
+    def supports_proxies(cls) -> bool:
+        return True
+
+    @classmethod
+    def supports_model(cls) -> bool:
         return False
 
     @classmethod
-    def needs_region(cls) -> bool:
+    def supports_region(cls) -> bool:
         return False
 
     async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
         result = super().translate(text)  # pyright: ignore[reportUnknownMemberType]
-        return "".join(result) if isinstance(result, list) else result
+        return " ".join(result).replace("  ", " ") if isinstance(result, list) else result
 
 
 class MicrosoftTranslationService(MicrosoftTranslator):
-    def __init__(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ):
-        _ = model  # Unused
+    def __init__(self, config: TranslationServiceConfig):
         super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=source, target=target, api_key=api_key, proxies=proxies, region=region
+            source=config["source"],
+            target=config["target"],
+            api_key=config["api_key"],
+            region=config["region"],
+            proxies=config["proxies"],
         )
-
-    @classmethod
-    def needs_proxies(cls) -> bool:
-        return True
 
     @classmethod
     def needs_api_key(cls) -> bool:
         return True
 
     @classmethod
-    def needs_model(cls) -> bool:
+    def supports_model(cls) -> bool:
         return False
 
     @classmethod
-    def needs_region(cls) -> bool:
+    def supports_region(cls) -> bool:
+        return True
+
+    @classmethod
+    def supports_proxies(cls) -> bool:
         return True
 
     async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -116,68 +106,52 @@ class MicrosoftTranslationService(MicrosoftTranslator):
 
 
 class YandexTranslationService(YandexTranslator):
-    def __init__(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ):
-        _ = (model, region)  # Unused
-        self.proxies = proxies
-        super().__init__(source=source, target=target, api_key=api_key)  # pyright: ignore[reportUnknownMemberType]
-
-    @classmethod
-    def needs_proxies(cls) -> bool:
-        return True
-
-    @classmethod
-    def needs_api_key(cls) -> bool:
-        return True
-
-    @classmethod
-    def needs_model(cls) -> bool:
-        return False
-
-    @classmethod
-    def needs_region(cls) -> bool:
-        return False
-
-    async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
-        return super().translate(text, proxies=self.proxies)  # pyright: ignore[reportUnknownMemberType]
-
-
-class ChatGPTTranslationService(ChatGptTranslator):
-    def __init__(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ):
-        _ = (api_key, region)  # Unused
+    def __init__(self, config: TranslationServiceConfig):
+        self._proxies = config["proxies"]
         super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=source, target=target, proxies=proxies, model=model
+            source=config["source"], target=config["target"], api_key=config["api_key"]
         )
 
     @classmethod
-    def needs_proxies(cls) -> bool:
+    def needs_api_key(cls) -> bool:
         return True
+
+    @classmethod
+    def supports_model(cls) -> bool:
+        return False
+
+    @classmethod
+    def supports_region(cls) -> bool:
+        return False
+
+    @classmethod
+    def supports_proxies(cls) -> bool:
+        return True
+
+    async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return super().translate(text, proxies=self._proxies)  # pyright: ignore[reportUnknownMemberType]
+
+
+class ChatGPTTranslationService(ChatGptTranslator):
+    def __init__(self, config: TranslationServiceConfig):
+        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+            source=config["source"], target=config["target"], api_key=config["api_key"], model=config["model"]
+        )
 
     @classmethod
     def needs_api_key(cls) -> bool:
         return True
 
     @classmethod
-    def needs_model(cls) -> bool:
+    def supports_model(cls) -> bool:
         return True
 
     @classmethod
-    def needs_region(cls) -> bool:
+    def supports_region(cls) -> bool:
+        return False
+
+    @classmethod
+    def supports_proxies(cls) -> bool:
         return False
 
     async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -185,64 +159,42 @@ class ChatGPTTranslationService(ChatGptTranslator):
 
 
 class TranslationServiceProtocol(Protocol):
-    def __init__(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ): ...
-    @classmethod
-    def needs_proxies(cls) -> bool: ...
+    def __init__(self, config: TranslationServiceConfig): ...
     @classmethod
     def needs_api_key(cls) -> bool: ...
     @classmethod
-    def needs_model(cls) -> bool: ...
+    def supports_model(cls) -> bool: ...
     @classmethod
-    def needs_region(cls) -> bool: ...
+    def supports_region(cls) -> bool: ...
+    @classmethod
+    def supports_proxies(cls) -> bool: ...
+    @classmethod
+    def requires_negotiation(cls) -> bool: ...
     async def translate(self, text: str) -> str: ...
 
 
-class TranslationServices(Enum):
-    GOOGLE_TRANSLATE = "GoogleTranslationService"
-    MY_MEMORY = "MyMemoryTranslationService"
-    MICROSOFT_TRANSLATE = "MicrosoftTranslationService"
-    YANDEX_TRANSLATE = "YandexTranslationService"
-    CHATGPT = "ChatGPTTranslationService"
+class TranslationServices(str, Enum):
+    GOOGLE_TRANSLATE = _("Google Translate")
+    MY_MEMORY = _("MyMemory Translator")
+    MICROSOFT_TRANSLATE = _("Microsoft Translator")
+    YANDEX_TRANSLATE = _("Yandex Translate")
+    CHATGPT = _("ChatGPT Translation Service")
 
-    def init_translation_service(
-        self,
-        source: str = "auto",
-        target: str = "en",
-        api_key: str | None = None,
-        proxies: Dict[str, str] | None = None,
-        model: str | None = None,
-        region: str | None = None,
-    ) -> TranslationServiceProtocol:
-        svc_class: Type[TranslationServiceProtocol] = GoogleTranslationService
+    @property
+    def translation_service_protocol(self) -> Type[TranslationServiceProtocol]:
         match self:
             case TranslationServices.GOOGLE_TRANSLATE:
-                svc_class = GoogleTranslationService
+                return GoogleTranslationService
             case TranslationServices.MY_MEMORY:
-                svc_class = MyMemoryTranslationService
+                return MyMemoryTranslationService
             case TranslationServices.MICROSOFT_TRANSLATE:
-                svc_class = MicrosoftTranslationService
+                return MicrosoftTranslationService
             case TranslationServices.YANDEX_TRANSLATE:
-                svc_class = YandexTranslationService
+                return YandexTranslationService
             case TranslationServices.CHATGPT:
-                svc_class = ChatGPTTranslationService
+                return ChatGPTTranslationService
             case _:
                 raise NotImplementedError(f"Translation service {self.value} is not implemented.")
-        return svc_class(  # pyright: ignore[reportUnknownMemberType, reportCallIssue]
-            source=source,
-            target=target,
-            api_key=api_key,
-            proxies=proxies,
-            model=model,
-            region=region,
-        )
 
 
 class POFileHandler:

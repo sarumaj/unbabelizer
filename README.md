@@ -19,11 +19,19 @@ internationalizing Python applications.
 It provides a guided interface for developers and translators to:
 
 - Extract translatable strings from source code using `babel`.
-- Automatically translate `.po` files using `Google Translate`.
+- Automatically translate `.po` files using translation services.
 - Review and edit translations interactively.
 - Compile `.po` files into binary `.mo` files for deployment.
 - Manage multiple languages and domains with ease.
 - Integrate seamlessly with Babel and polib for robust gettext support.
+
+Supported translation services:
+
+- Google Translate
+- Microsoft Translator
+- Yandex Translator
+- ChatGPT Translation Service
+- MyMemory Translator
 
 ## Demo
 
@@ -99,6 +107,12 @@ encoding = utf-8
 
 # Line width for .po files (optional, default: 120)
 line_width = 120
+
+# Translation service specific settings
+api_key = <my-api-key>
+model = "gpt-3.5-turbo"
+http_proxy = "http://<my-proxy>"
+https_proxy = "https://<my-proxy>"
 ```
 
 You can also override these settings using CLI arguments:
