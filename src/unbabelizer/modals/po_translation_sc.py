@@ -2,7 +2,6 @@ import asyncio
 from gettext import gettext as _
 from pathlib import Path
 
-from googletrans import Translator as GoogleTranslator  # pyright: ignore[reportMissingTypeStubs]
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container
@@ -11,7 +10,7 @@ from textual.widgets import Checkbox, Footer, Header, ProgressBar
 from textual.widgets import Static as Placeholder
 
 from ..log import Logger
-from ..types import POFileHandler
+from ..types import POFileHandler, TranslationServices
 from ..utils import NotifyException, apply_styles, correct_translation, wait_for_element
 
 
@@ -121,7 +120,9 @@ class Translator(ModalScreen[None], POFileHandler):
             title=_("⏳ Translation Started"),
         )
         with NotifyException(self):
-            translator = GoogleTranslator()
+            translator = TranslationServices.GOOGLE_TRANSLATE.init_translation_service(
+                source=self._src_lang, target=self._target_lang
+            )
             for (
                 idx,
                 entry,  # pyright: ignore[reportUnknownVariableType]
@@ -136,10 +137,8 @@ class Translator(ModalScreen[None], POFileHandler):
                                 (
                                     await translator.translate(
                                         elem,  # type: ignore[reportUnknownArgumentType]
-                                        src=self._src_lang,
-                                        dest=self._target_lang,
                                     )
-                                ).text,
+                                ),
                             )
                             for index, elem in enumerate(  # pyright: ignore[reportUnknownVariableType]
                                 (
@@ -167,10 +166,8 @@ class Translator(ModalScreen[None], POFileHandler):
                             (
                                 await translator.translate(  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportArgumentType]
                                     entry.msgid,  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-                                    src=self._src_lang,
-                                    dest=self._target_lang,
                                 )
-                            ).text,
+                            ),
                         )
                         self.logger.debug(
                             "Translated singular entry",
