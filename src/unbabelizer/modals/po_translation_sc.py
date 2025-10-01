@@ -7,6 +7,8 @@ from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import ScrollableContainer
 from textual.screen import ModalScreen
+from textual.suggester import SuggestFromList
+from textual.validation import Regex
 from textual.widgets import Checkbox, Footer, Header, Input, ProgressBar, Select
 from textual.widgets import Static as Placeholder
 
@@ -15,13 +17,14 @@ from ..types import POFileHandler, TranslationServices
 from ..utils import NotifyException, apply_styles, correct_translation, wait_for_element
 
 
-class TranslationServiceConfig(TypedDict):
+class TranslationServiceConfig(TypedDict, total=False):
     source: str
     target: str
     api_key: str | None
     proxies: dict[str, str] | None
     model: str | None
     region: str | None
+    api_key_type: str | None
 
 
 class Translator(ModalScreen[None], POFileHandler):
@@ -74,25 +77,35 @@ class Translator(ModalScreen[None], POFileHandler):
             placeholder=_("HTTP Proxy"),
             value=((self._translation_config.get("proxies", {}) or {}).get("http", "")),
             name="proxy_http",
+            suggester=SuggestFromList(["http://"]),
         )
         yield Input(
             placeholder=_("HTTPS Proxy"),
             value=((self._translation_config.get("proxies", {}) or {}).get("https", "")),
             name="proxy_https",
+            suggester=SuggestFromList(["https://"]),
         )
 
     def compose_model(self) -> ComposeResult:
         """Compose the model input field if supported."""
-        yield Input(placeholder=_("Model"), value=self._translation_config["model"] or "", name="model")
+        yield Input(placeholder=_("Model"), value=self._translation_config.get("model") or "", name="model")
 
     def compose_region(self) -> ComposeResult:
         """Compose the region input field if supported."""
-        yield Input(placeholder=_("Region"), value=self._translation_config["region"] or "", name="region")
+        yield Input(placeholder=_("Region"), value=self._translation_config.get("region") or "", name="region")
 
     def compose_api_key(self) -> ComposeResult:
         """Compose the API key input field if needed."""
         yield Input(
-            placeholder=_("API Key"), value=self._translation_config["api_key"] or "", password=True, name="api_key"
+            placeholder=_("API Key"), value=self._translation_config.get("api_key") or "", password=True, name="api_key"
+        )
+        yield Input(
+            placeholder=_("API Key Type (free or paid)"),
+            value=self._translation_config.get("api_key_type") or "",
+            name="api_key_type",
+            suggester=SuggestFromList(["free", "paid"]),
+            validators=(Regex(r"^(free|paid)$", flags=0, failure_description=_("Must be 'free' or 'paid'")),),
+            validate_on=("submitted", "changed"),
         )
 
     def compose(self) -> ComposeResult:
@@ -105,6 +118,8 @@ class Translator(ModalScreen[None], POFileHandler):
                     Select(
                         ((s.value, s.value) for s in TranslationServices),
                         value=TranslationServices.GOOGLE_TRANSLATE.value,
+                        id="translation_service",
+                        prompt=_("Select Translation Service"),
                     ),
                     width="1fr",
                 ),
@@ -132,7 +147,7 @@ class Translator(ModalScreen[None], POFileHandler):
         inputs = settings_container.query(Input)
         for input_widget in inputs:
             match input_widget.name:
-                case "region" | "model" | "api_key":
+                case "region" | "model" | "api_key" | "api_key_type":
                     self._translation_config[input_widget.name] = input_widget.value or None
 
                 case "proxy_http" | "proxy_https":
@@ -219,22 +234,32 @@ class Translator(ModalScreen[None], POFileHandler):
 
         self._translating = True
         progressbar = await wait_for_element(lambda: self.query_one(ProgressBar))
+        override_existing = (await wait_for_element(lambda: self.query_one(Checkbox))).value
         selected_value = (await wait_for_element(self.query_one, selector=Select)).value
+
         selected_service = (
             TranslationServices(selected_value)
             if selected_value is not Select.BLANK
             else TranslationServices.GOOGLE_TRANSLATE
         )
         await self.apply_translation_settings()
-        translator = selected_service.translation_service_protocol(self._translation_config)
-        override_existing = (await wait_for_element(lambda: self.query_one(Checkbox))).value
-
-        self.notify(
-            _("Translating PO file... This may take a while depending on the file size."),
-            timeout=5,
-            title=_("⏳ Translation Started"),
+        self.logger.info(
+            "Using translation service",
+            extra={
+                "context": "Translator.translate_po",
+                "service": selected_service.value,
+                "config": self._translation_config,
+            },
         )
         with NotifyException(self):
+            translator = selected_service.translation_service_protocol(self._translation_config)  # type: ignore[reportArgumentType]
+
+            self.notify(
+                _("Translating PO file... This may take a while depending on the file size."),
+                timeout=5,
+                title=_("⏳ Translation Started"),
+            )
+
             for (
                 idx,
                 entry,  # pyright: ignore[reportUnknownVariableType]

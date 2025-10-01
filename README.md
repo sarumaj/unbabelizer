@@ -1,10 +1,13 @@
 <!-- markdownlint-disable MD041 -->
+
 [![release](https://github.com/sarumaj/unbabelizer/actions/workflows/release.yml/badge.svg)](https://github.com/sarumaj/unbabelizer/actions/workflows/release.yml)
 [![GitHub Release](https://img.shields.io/github/v/release/sarumaj/unbabelizer?logo=github)](https://github.com/sarumaj/unbabelizer/releases/latest)
 [![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/sarumaj/unbabelizer)](https://github.com/sarumaj/unbabelizer/blob/main/pyproject.toml)
 
 ---
+
 <!-- markdownlint-enable MD041 -->
+
 # unbabelizer
 
 `unbabelizer` is an interactive CLI and TUI (Text User Interface) tool for
@@ -32,6 +35,7 @@ Supported translation services:
 - Yandex Translator
 - ChatGPT Translation Service
 - MyMemory Translator
+- Deepl Translator
 
 ## Demo
 
@@ -48,13 +52,13 @@ to execute the app in German language.
 ## Features
 
 - **Interactive TUI:** Edit and review translations in a modern terminal UI
-powered by [Textual](https://github.com/Textualize/textual).
+  powered by [Textual](https://github.com/Textualize/textual).
 - **Automated Extraction:** Find and extract translatable strings from your
-codebase using Babel.
+  codebase using Babel.
 - **Batch Translation:** Translate `.po` files automatically via Google Translate,
-with support for multiple target languages.
+  with support for multiple target languages.
 - **Review Workflow:** Step through translations, edit entries, and mark reviewed
-items.
+  items.
 - **Compilation:** Compile `.po` files to `.mo` for production use.
 - **Configurable:** Control all aspects via `pyproject.toml` or CLI arguments.
 - **Exclusion Patterns:** Skip files or directories using glob patterns.
@@ -109,7 +113,8 @@ encoding = utf-8
 line_width = 120
 
 # Translation service specific settings
-api_key = <my-api-key>
+api_key = "<my-api-key>"
+api_key_type = "<free or paid>"
 model = "gpt-3.5-turbo"
 http_proxy = "http://<my-proxy>"
 https_proxy = "https://<my-proxy>"
@@ -137,6 +142,8 @@ unbabelizer \
 - `--exclude-patterns`: Patterns to exclude (optional)
 - `--mapping-file`: Babel mapping file (optional)
 - `--line-width`: Line width for .po files (optional)
+
+Run `unbabelizer --help` to see all available options.
 
 Settings from the CLI override those in `pyproject.toml`.
 

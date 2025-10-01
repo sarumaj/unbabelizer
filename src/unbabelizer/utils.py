@@ -2,12 +2,10 @@ import asyncio
 import re
 import traceback
 from contextlib import AbstractContextManager
-from functools import lru_cache
 from gettext import gettext as _
 from types import TracebackType
-from typing import Callable, Literal, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar
+from typing import Any, Callable, Literal, LiteralString, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar, Union
 
-from babel import localedata, negotiate_locale
 from babel.messages.frontend import CommandLineInterface
 from textual.notifications import SeverityLevel
 from textual.widget import Widget
@@ -132,20 +130,27 @@ def escape_control_chars(text: str) -> str:
     return re.sub(r"[\n\r\t\b\f\v\a\\\x00]", replace_func, text)
 
 
-@lru_cache
-def negotiate_language(lang: str) -> str:
-    """Negotiate the best matching language from a list of available languages.
+def get_base_type(ann: Any) -> Any:
+    """Recursively extract the base type from complex type annotations.
 
     Args:
-        lang (str): The desired language code.
+        ann (Any): The type annotation to process.
     Returns:
-        str: The best matching language code or the default if no match is found.
+        Any: The base type extracted from the annotation.
     """
-    best_match = negotiate_locale(lang, localedata.locale_identifiers())
-    if best_match is None or lang not in best_match:
-        return lang
+    origin = getattr(ann, "__origin__", None)
+    if origin is Optional:
+        return get_base_type(ann.__args__[0])
 
-    return best_match
+    if origin is Union:
+        non_none_args = [arg for arg in ann.__args__ if arg is not type(None)]
+        if len(non_none_args) == 1:
+            return get_base_type(non_none_args[0])
+
+    if origin is Literal or origin is LiteralString:
+        return type(ann.__args__[0])  # pyright: ignore[reportUnknownVariableType]
+
+    return ann
 
 
 def run_babel_cmd(args: Sequence[str]):

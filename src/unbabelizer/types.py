@@ -4,12 +4,19 @@ from pathlib import Path
 from typing import Any, Dict, NamedTuple, Protocol, Tuple, Type, TypedDict
 
 import polib
+from babel import negotiate_locale
 from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
     ChatGptTranslator,
+    DeeplTranslator,
     GoogleTranslator,
     MicrosoftTranslator,
     MyMemoryTranslator,
     YandexTranslator,
+)
+from deep_translator.constants import (  # pyright: ignore[reportMissingTypeStubs]
+    DEEPL_LANGUAGE_TO_CODE,
+    GOOGLE_LANGUAGES_TO_CODES,
+    MY_MEMORY_LANGUAGES_TO_CODES,
 )
 
 
@@ -17,15 +24,47 @@ class TranslationServiceConfig(TypedDict):
     source: str
     target: str
     api_key: str | None
+    api_key_type: str | None
     proxies: dict[str, str] | None
     model: str | None
     region: str | None
 
 
+class DeeplTranslationService(DeeplTranslator):
+    def __init__(self, config: TranslationServiceConfig):
+        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+            source=negotiate_locale([config["source"]], DEEPL_LANGUAGE_TO_CODE.values()) or config["source"],
+            target=negotiate_locale([config["target"]], DEEPL_LANGUAGE_TO_CODE.values()) or config["target"],
+            api_key=config["api_key"],
+            use_free_api=config.get("api_key_type", "free") == "free",
+        )
+
+    @classmethod
+    def needs_api_key(cls) -> bool:
+        return True
+
+    @classmethod
+    def supports_model(cls) -> bool:
+        return False
+
+    @classmethod
+    def supports_region(cls) -> bool:
+        return False
+
+    @classmethod
+    def supports_proxies(cls) -> bool:
+        return False
+
+    async def translate(self, text: str) -> str:  # pyright: ignore[reportIncompatibleMethodOverride]
+        return super().translate(text)  # pyright: ignore[reportUnknownMemberType]
+
+
 class GoogleTranslationService(GoogleTranslator):
     def __init__(self, config: TranslationServiceConfig):
         super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=config["source"], target=config["target"], proxies=config["proxies"]
+            source=negotiate_locale([config["source"]], GOOGLE_LANGUAGES_TO_CODES.values()) or config["source"],
+            target=negotiate_locale([config["target"]], GOOGLE_LANGUAGES_TO_CODES.values()) or config["target"],
+            proxies=config["proxies"],
         )
 
     @classmethod
@@ -51,7 +90,19 @@ class GoogleTranslationService(GoogleTranslator):
 class MyMemoryTranslationService(MyMemoryTranslator):
     def __init__(self, config: TranslationServiceConfig):
         super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=config["source"], target=config["target"], proxies=config["proxies"]
+            source=negotiate_locale(
+                [config["source"]],
+                MY_MEMORY_LANGUAGES_TO_CODES.values(),
+                sep="-",
+            )
+            or config["source"],
+            target=negotiate_locale(
+                [config["target"]],
+                MY_MEMORY_LANGUAGES_TO_CODES.values(),
+                sep="-",
+            )
+            or config["target"],
+            proxies=config["proxies"],
         )
 
     @classmethod
@@ -84,6 +135,25 @@ class MicrosoftTranslationService(MicrosoftTranslator):
             region=config["region"],
             proxies=config["proxies"],
         )
+        # TODO: evaluate and store as constant type
+        MICROSOFT_LANGUAGES_TO_CODES = self.get_supported_languages(  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType] # keep at one line
+            as_dict=True
+        )
+        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+            source=negotiate_locale(
+                [config["source"]],
+                MICROSOFT_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
+            )
+            or config["source"],
+            target=negotiate_locale(
+                [config["target"]],
+                MICROSOFT_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
+            )
+            or config["target"],
+            api_key=config["api_key"],
+            region=config["region"],
+            proxies=config["proxies"],
+        )
 
     @classmethod
     def needs_api_key(cls) -> bool:
@@ -110,6 +180,23 @@ class YandexTranslationService(YandexTranslator):
         self._proxies = config["proxies"]
         super().__init__(  # pyright: ignore[reportUnknownMemberType]
             source=config["source"], target=config["target"], api_key=config["api_key"]
+        )
+        # TODO: evaluate and store as constant type
+        YANDEX_LANGUAGES_TO_CODES = self.get_supported_languages(  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType] # keep at one line
+            as_dict=True
+        )
+        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+            source=negotiate_locale(
+                [config["source"]],
+                YANDEX_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
+            )
+            or config["source"],
+            target=negotiate_locale(
+                [config["target"]],
+                YANDEX_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
+            )
+            or config["target"],
+            api_key=config["api_key"],
         )
 
     @classmethod
@@ -168,8 +255,6 @@ class TranslationServiceProtocol(Protocol):
     def supports_region(cls) -> bool: ...
     @classmethod
     def supports_proxies(cls) -> bool: ...
-    @classmethod
-    def requires_negotiation(cls) -> bool: ...
     async def translate(self, text: str) -> str: ...
 
 
@@ -179,6 +264,7 @@ class TranslationServices(str, Enum):
     MICROSOFT_TRANSLATE = _("Microsoft Translator")
     YANDEX_TRANSLATE = _("Yandex Translate")
     CHATGPT = _("ChatGPT Translation Service")
+    DEEPL_TRANSLATOR = _("DeepL Translator")
 
     @property
     def translation_service_protocol(self) -> Type[TranslationServiceProtocol]:
@@ -193,6 +279,8 @@ class TranslationServices(str, Enum):
                 return YandexTranslationService
             case TranslationServices.CHATGPT:
                 return ChatGPTTranslationService
+            case TranslationServices.DEEPL_TRANSLATOR:
+                return DeeplTranslationService
             case _:
                 raise NotImplementedError(f"Translation service {self.value} is not implemented.")
 

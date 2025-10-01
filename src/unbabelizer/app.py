@@ -282,7 +282,10 @@ class UnbabelizerApp(App[None]):
         self.logger.info("Pushing translation screen", extra={"context": "unbabelizerApp.flow_translate_po"})
         await self._lock.acquire()
         await self.push_screen(
-            Translator(self.pofile_path, self._config.get_translation_config(self._current_lang_idx)),
+            Translator(
+                self.pofile_path,
+                self._config.get_translation_config(self._current_lang_idx),  # pyright: ignore[reportArgumentType]
+            ),
             callback=lambda _: self._lock.release(),
         )
         self.logger.info("Translation screen pushed", extra={"context": "unbabelizerApp.flow_translate_po"})
