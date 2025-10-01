@@ -4,7 +4,7 @@ import traceback
 from contextlib import AbstractContextManager
 from gettext import gettext as _
 from types import TracebackType
-from typing import Callable, Literal, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar
+from typing import Any, Callable, Literal, LiteralString, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar, Union
 
 from babel.messages.frontend import CommandLineInterface
 from textual.notifications import SeverityLevel
@@ -128,6 +128,29 @@ def escape_control_chars(text: str) -> str:
         return escape_map.get(char, f"\\x{ord(char):02x}")
 
     return re.sub(r"[\n\r\t\b\f\v\a\\\x00]", replace_func, text)
+
+
+def get_base_type(ann: Any) -> Any:
+    """Recursively extract the base type from complex type annotations.
+
+    Args:
+        ann (Any): The type annotation to process.
+    Returns:
+        Any: The base type extracted from the annotation.
+    """
+    origin = getattr(ann, "__origin__", None)
+    if origin is Optional:
+        return get_base_type(ann.__args__[0])
+
+    if origin is Union:
+        non_none_args = [arg for arg in ann.__args__ if arg is not type(None)]
+        if len(non_none_args) == 1:
+            return get_base_type(non_none_args[0])
+
+    if origin is Literal or origin is LiteralString:
+        return type(ann.__args__[0])  # pyright: ignore[reportUnknownVariableType]
+
+    return ann
 
 
 def run_babel_cmd(args: Sequence[str]):

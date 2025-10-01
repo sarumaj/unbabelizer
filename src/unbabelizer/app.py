@@ -7,7 +7,7 @@ from typing import Any
 from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Container
+from textual.containers import ScrollableContainer
 from textual.widgets import Footer, Header, ProgressBar, Select, SelectionList, Static
 
 from .config import Config
@@ -75,7 +75,7 @@ class UnbabelizerApp(App[None]):
         """Compose the UI elements for the main application."""
         yield Header()
         yield apply_styles(
-            Container(
+            ScrollableContainer(
                 Static(_("Target language")),
                 Select(
                     [(l, l) for l in self._config.dest_lang],
@@ -282,7 +282,10 @@ class UnbabelizerApp(App[None]):
         self.logger.info("Pushing translation screen", extra={"context": "unbabelizerApp.flow_translate_po"})
         await self._lock.acquire()
         await self.push_screen(
-            Translator(self.pofile_path, self._config.src_lang, self._config.dest_lang[self._current_lang_idx]),
+            Translator(
+                self.pofile_path,
+                self._config.get_translation_config(self._current_lang_idx),  # pyright: ignore[reportArgumentType]
+            ),
             callback=lambda _: self._lock.release(),
         )
         self.logger.info("Translation screen pushed", extra={"context": "unbabelizerApp.flow_translate_po"})
