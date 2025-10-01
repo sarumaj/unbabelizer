@@ -1,18 +1,30 @@
 import asyncio
 from gettext import gettext as _
 from pathlib import Path
+from typing import TypedDict
 
-from googletrans import Translator as GoogleTranslator  # pyright: ignore[reportMissingTypeStubs]
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Container
+from textual.containers import ScrollableContainer
 from textual.screen import ModalScreen
-from textual.widgets import Checkbox, Footer, Header, ProgressBar
+from textual.suggester import SuggestFromList
+from textual.validation import Regex
+from textual.widgets import Checkbox, Footer, Header, Input, ProgressBar, Select
 from textual.widgets import Static as Placeholder
 
 from ..log import Logger
-from ..types import POFileHandler
+from ..types import POFileHandler, TranslationServices
 from ..utils import NotifyException, apply_styles, correct_translation, wait_for_element
+
+
+class TranslationServiceConfig(TypedDict, total=False):
+    source: str
+    target: str
+    api_key: str | None
+    proxies: dict[str, str] | None
+    model: str | None
+    region: str | None
+    api_key_type: str | None
 
 
 class Translator(ModalScreen[None], POFileHandler):
@@ -24,19 +36,18 @@ class Translator(ModalScreen[None], POFileHandler):
         Binding(key="o", action="toggle_override", description=_("Toggle Override Existing"), show=True),
     ]
 
-    def __init__(self, po_path: Path, src_lang: str, target_lang: str):
+    def __init__(self, po_path: Path, translation_config: TranslationServiceConfig):
         """Initialize the Translator modal.
 
         Args:
             po_path (Path): Path to the PO file to be translated.
-            src_lang (str): Source language code.
-            target_lang (str): Target language code.
+            translation_service (TranslationServices): The translation service to use.
+            config (TranslationServiceConfig): Configuration for the translation service.
         """
         ModalScreen.__init__(self)  # pyright: ignore[reportUnknownMemberType]
 
-        self._src_lang = src_lang
-        self._target_lang = target_lang
         self._translating = False
+        self._translation_config = translation_config
 
         self.logger.info(
             "Loading PO file for translation...",
@@ -60,12 +71,59 @@ class Translator(ModalScreen[None], POFileHandler):
             "logger",
         )
 
+    def compose_proxies(self) -> ComposeResult:
+        """Compose the proxy input fields."""
+        yield Input(
+            placeholder=_("HTTP Proxy"),
+            value=((self._translation_config.get("proxies", {}) or {}).get("http", "")),
+            name="proxy_http",
+            suggester=SuggestFromList(["http://"]),
+        )
+        yield Input(
+            placeholder=_("HTTPS Proxy"),
+            value=((self._translation_config.get("proxies", {}) or {}).get("https", "")),
+            name="proxy_https",
+            suggester=SuggestFromList(["https://"]),
+        )
+
+    def compose_model(self) -> ComposeResult:
+        """Compose the model input field if supported."""
+        yield Input(placeholder=_("Model"), value=self._translation_config.get("model") or "", name="model")
+
+    def compose_region(self) -> ComposeResult:
+        """Compose the region input field if supported."""
+        yield Input(placeholder=_("Region"), value=self._translation_config.get("region") or "", name="region")
+
+    def compose_api_key(self) -> ComposeResult:
+        """Compose the API key input field if needed."""
+        yield Input(
+            placeholder=_("API Key"), value=self._translation_config.get("api_key") or "", password=True, name="api_key"
+        )
+        yield Input(
+            placeholder=_("API Key Type (free or paid)"),
+            value=self._translation_config.get("api_key_type") or "",
+            name="api_key_type",
+            suggester=SuggestFromList(["free", "paid"]),
+            validators=(Regex(r"^(free|paid)$", flags=0, failure_description=_("Must be 'free' or 'paid'")),),
+            validate_on=("submitted", "changed"),
+        )
+
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the modal."""
         yield Header()
         yield apply_styles(
-            Container(
+            ScrollableContainer(
                 apply_styles(Checkbox(label=_("Override existing translations"), value=False), width="1fr"),
+                apply_styles(
+                    Select(
+                        ((s.value, s.value) for s in TranslationServices),
+                        value=TranslationServices.GOOGLE_TRANSLATE.value,
+                        id="translation_service",
+                        prompt=_("Select Translation Service"),
+                    ),
+                    width="1fr",
+                ),
+                apply_styles(ScrollableContainer(*self.compose_proxies(), id="translator_settings"), width="1fr"),
                 apply_styles(Placeholder(), height="1fr"),
                 apply_styles(
                     ProgressBar(
@@ -83,8 +141,70 @@ class Translator(ModalScreen[None], POFileHandler):
         )
         yield Footer()
 
+    async def apply_translation_settings(self):
+        """Apply the translation settings from the input fields."""
+        settings_container = await wait_for_element(lambda: self.query_one("#translator_settings", ScrollableContainer))
+        inputs = settings_container.query(Input)
+        for input_widget in inputs:
+            match input_widget.name:
+                case "region" | "model" | "api_key" | "api_key_type":
+                    self._translation_config[input_widget.name] = input_widget.value or None
+
+                case "proxy_http" | "proxy_https":
+                    proxies = self._translation_config.get("proxies") or {}
+                    if input_widget.value:
+                        proxies[input_widget.name.removeprefix("proxy_")] = input_widget.value
+                    else:
+                        proxies.pop(input_widget.name.removeprefix("proxy_"), None)
+                    self._translation_config["proxies"] = proxies or None
+
+                case _:
+                    pass
+
+        await asyncio.sleep(0)
+
+    async def on_select_changed(self, event: Select.Changed):
+        """Handle changes in the translation service selection."""
+        if self._translating:
+            self.logger.warning(
+                "Translation service change ignored during active translation",
+                extra={"context": "Translator.on_select_changed"},
+            )
+            return
+
+        if event.value is Select.BLANK:
+            self.logger.warning(
+                "Blank translation service selected, ignoring", extra={"context": "Translator.on_select_changed"}
+            )
+            return
+
+        settings_container = await wait_for_element(lambda: self.query_one("#translator_settings", ScrollableContainer))
+        selected_service = TranslationServices(event.value).translation_service_protocol
+        await settings_container.remove_children()
+        if selected_service.needs_api_key():
+            await settings_container.mount_all(self.compose_api_key())
+        if selected_service.supports_model():
+            await settings_container.mount_all(self.compose_model())
+        if selected_service.supports_region():
+            await settings_container.mount_all(self.compose_region())
+        if selected_service.supports_proxies():
+            await settings_container.mount_all(self.compose_proxies())
+
+        self.logger.info(
+            "Translation service changed",
+            extra={"context": "Translator.on_select_changed", "service": event.value},
+        )
+        await asyncio.sleep(0)
+
     async def action_toggle_override(self):
         """Toggle the override existing translations checkbox."""
+        if self._translating:
+            self.logger.warning(
+                "Override toggle ignored during active translation",
+                extra={"context": "Translator.action_toggle_override"},
+            )
+            return
+
         self.logger.debug(
             "Toggling override existing translations", extra={"context": "Translator.action_toggle_override"}
         )
@@ -104,6 +224,7 @@ class Translator(ModalScreen[None], POFileHandler):
     async def action_translate(self):
         """Start the translation process."""
         self.logger.info("Starting translation process", extra={"context": "Translator.action_translate"})
+
         self.run_worker(self.translate_pofile, group="translation")
         self.logger.info("Translation process started", extra={"context": "Translator.action_translate"})
 
@@ -114,14 +235,31 @@ class Translator(ModalScreen[None], POFileHandler):
         self._translating = True
         progressbar = await wait_for_element(lambda: self.query_one(ProgressBar))
         override_existing = (await wait_for_element(lambda: self.query_one(Checkbox))).value
+        selected_value = (await wait_for_element(self.query_one, selector=Select)).value
 
-        self.notify(
-            _("Translating PO file... This may take a while depending on the file size."),
-            timeout=5,
-            title=_("⏳ Translation Started"),
+        selected_service = (
+            TranslationServices(selected_value)
+            if selected_value is not Select.BLANK
+            else TranslationServices.GOOGLE_TRANSLATE
+        )
+        await self.apply_translation_settings()
+        self.logger.info(
+            "Using translation service",
+            extra={
+                "context": "Translator.translate_po",
+                "service": selected_service.value,
+                "config": self._translation_config,
+            },
         )
         with NotifyException(self):
-            translator = GoogleTranslator()
+            translator = selected_service.translation_service_protocol(self._translation_config)  # type: ignore[reportArgumentType]
+
+            self.notify(
+                _("Translating PO file... This may take a while depending on the file size."),
+                timeout=5,
+                title=_("⏳ Translation Started"),
+            )
+
             for (
                 idx,
                 entry,  # pyright: ignore[reportUnknownVariableType]
@@ -136,10 +274,8 @@ class Translator(ModalScreen[None], POFileHandler):
                                 (
                                     await translator.translate(
                                         elem,  # type: ignore[reportUnknownArgumentType]
-                                        src=self._src_lang,
-                                        dest=self._target_lang,
                                     )
-                                ).text,
+                                ),
                             )
                             for index, elem in enumerate(  # pyright: ignore[reportUnknownVariableType]
                                 (
@@ -167,10 +303,8 @@ class Translator(ModalScreen[None], POFileHandler):
                             (
                                 await translator.translate(  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType, reportArgumentType]
                                     entry.msgid,  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-                                    src=self._src_lang,
-                                    dest=self._target_lang,
                                 )
-                            ).text,
+                            ),
                         )
                         self.logger.debug(
                             "Translated singular entry",

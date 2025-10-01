@@ -111,20 +111,15 @@ class POEditScreen(ModalScreen[str]):
         )
         yield Footer()
 
-    async def on_key(self, event: Key):
+    async def key_enter(self, event: Key):
         """Handle key events for the modal. Extra handling necessary to debounce Enter key."""
+        event.prevent_default()
+        event.stop()
         self.logger.debug(
-            "Key pressed in POEditScreen modal", extra={"key": event.key, "context": "POEditScreen.on_key"}
+            "Double Enter detected, executing submit.",
+            extra={"action": "submit", "context": "POEditScreen.key_enter"},
         )
-
-        if event.key == "enter":
-            event.prevent_default()
-            event.stop()
-            self.logger.debug(
-                "Double Enter detected, executing submit.",
-                extra={"action": "submit", "context": "POEditScreen.on_key"},
-            )
-            await self.run_action("submit")
+        await self.run_action("submit")
 
     async def filter_cells(self):
         """Filter the entries based on the input value."""

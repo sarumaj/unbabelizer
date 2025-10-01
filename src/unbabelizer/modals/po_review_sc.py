@@ -5,7 +5,7 @@ from typing import Any, Generator, List, Tuple
 
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Container
+from textual.containers import ScrollableContainer
 from textual.coordinate import Coordinate
 from textual.events import Key
 from textual.screen import ModalScreen
@@ -101,22 +101,24 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"))
         for cell in self.generate_cells():
             table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
-        yield apply_styles(Container(table), width="1fr", height="1fr")
+        yield apply_styles(ScrollableContainer(table), width="1fr", height="1fr", vertical="top")
         yield Footer()
 
-    async def on_key(self, event: Key):
+    async def key_enter(self, event: Key):
         """Handle key events for the modal."""
+        event.prevent_default()
+        event.stop()
         self.logger.debug(
-            "Key pressed in POReviewScreen modal", extra={"key": event.key, "context": "POReviewScreen.on_key"}
+            "Executing action for key:",
+            extra={"action": "edit", "context": "POReviewScreen.key_enter"},
         )
-        if event.key == "enter":
-            event.prevent_default()
-            event.stop()
-            self.logger.debug(
-                "Executing action for key:",
-                extra={"action": "edit", "context": "POReviewScreen.on_key"},
-            )
-            await self.run_action("edit")
+        await self.run_action("edit")
+
+    async def on_mount(self):
+        """Focus the data table when the modal is mounted."""
+        table = await wait_for_element(self.query_one, selector=DataTable)
+        table.focus()
+        self.logger.info("DataTable focused on mount", extra={"context": "POReviewScreen.on_mount"})
 
     def edit_translation_callback(self, result: Any):
         """Edit the translation of the currently selected entry."""
@@ -215,7 +217,47 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         """Edit the currently selected entry."""
         self.logger.debug("Opening edit modal", extra={"context": "POReviewScreen.action_edit"})
         table = await wait_for_element(self.query_one, selector=DataTable)
-        entry, idx = self.entries[table.cursor_row]
+        if table.cursor_row == len(table.rows):
+            self.logger.warning(
+                "No row selected for editing, aborting.",
+                extra={"row": table.cursor_row, "column": table.cursor_column, "context": "POReviewScreen.action_edit"},
+            )
+            self.notify(
+                _("Reset the filter to select an entry to edit."),
+                timeout=2,
+                title=_("❌ Error"),
+            )
+            return
+
+        current_row = table.get_row_at(table.cursor_row)
+        for entry, idx in self.entries:
+            if idx is None and current_row[1] == "Singular" and escape_control_chars(entry.msgid) == current_row[2]:
+                break
+            elif (
+                idx is not None
+                and f"{current_row[1]}".startswith("Plural")
+                and escape_control_chars(entry.msgid if idx == 0 else entry.msgid_plural) == current_row[2]
+            ):
+                break
+
+        else:
+            self.logger.error(
+                "Could not find the selected entry in the entries list, aborting edit.",
+                extra={
+                    "row": table.cursor_row,
+                    "rows": len(table.rows),
+                    "column": table.cursor_column,
+                    "columns": len(table.columns),
+                    "context": "POReviewScreen.action_edit",
+                },
+            )
+            self.notify(
+                _("No entry found for the selected cell. Restart the application."),
+                timeout=2,
+                title=_("❌ Error"),
+            )
+            return
+
         await self.app.push_screen(  # pyright: ignore[reportUnknownMemberType]
             POEditScreen(entry, idx), callback=self.edit_translation_callback
         )
