@@ -39,7 +39,7 @@ Supported translation services:
 
 ## Demo
 
-[![!["Asciinema Demo"](https://github.com/sarumaj/unbabelizer/blob/main/docs/thumbnail.png?raw=true)](docs/thumbnail.png)](https://asciinema.org/a/ZKhYGHJ5AIi7MwEYCpWD64oFG)
+[![asciicast](https://asciinema.org/a/JWMSteKuWEp2UBCQJGCbrBdxr.svg)](https://asciinema.org/a/JWMSteKuWEp2UBCQJGCbrBdxr)
 
 The app is itself available in German language. Simply run
 
