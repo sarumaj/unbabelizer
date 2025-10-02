@@ -12,7 +12,7 @@ from textual.screen import ModalScreen
 from textual.widgets import DataTable, Footer, Header
 
 from ..log import Logger
-from ..types import POFileHandler, TableCell
+from ..types import POFileEntryTag, POFileHandler, TableCell
 from ..utils import NotifyException, apply_styles, escape_control_chars, wait_for_element
 from .confirm_inevitable import ConfirmInevitable
 from .po_edit_sc import POEditScreen
@@ -84,7 +84,11 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         for no, (entry, idx) in enumerate(self.entries):
             if idx is None:
                 yield TableCell(
-                    f"{no}", "Singular", escape_control_chars(entry.msgid), escape_control_chars(entry.msgstr)
+                    f"{no}",
+                    "Singular",
+                    escape_control_chars(entry.msgid),
+                    escape_control_chars(entry.msgstr),
+                    POFileEntryTag.fish(entry, POFileEntryTag.UNKNOWN).value,
                 )
             else:
                 yield TableCell(
@@ -92,15 +96,16 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
                     f"Plural[{idx}]",
                     escape_control_chars(entry.msgid if idx == 0 else entry.msgid_plural),
                     escape_control_chars(entry.msgstr_plural[idx]),
+                    POFileEntryTag.fish(entry, POFileEntryTag.UNKNOWN).value,
                 )
 
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the modal."""
         yield Header()
         table = DataTable[str](zebra_stripes=True)
-        table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"))
+        table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"), _("Tag"))
         for cell in self.generate_cells():
-            table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
+            table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr, cell.tag)
         yield apply_styles(ScrollableContainer(table), width="1fr", height="1fr", vertical="top")
         yield Footer()
 
@@ -133,28 +138,33 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
             "Editing translation", extra={"new_value": result, "context": "POReviewScreen.edit_translation"}
         )
         table: DataTable[str] = self.query_one(DataTable)  # pyright: ignore[reportUnknownVariableType]
-        coordinate = Coordinate(table.cursor_row, len(table.columns) - 1)
-        old_value = table.get_cell_at(coordinate)
-        table.update_cell_at(coordinate, escape_control_chars(result), update_width=True)
-        self.notify(
-            _("Translation updated.")
-            + "\n"
-            + _('Previous value was: "{old_value}", current value is: "{new_value}".').format(
-                old_value=old_value or _("<empty>"), new_value=result or _("<empty>")
-            ),
-            timeout=2,
-            title=_("✅ Success"),
-        )
-        self.logger.info(
-            "Translation updated in table",
-            extra={
-                "row": table.cursor_row,
-                "column": len(table.columns) - 1,
-                "new_value": result,
-                "old_value": old_value,
-                "context": "POReviewScreen.edit_translation",
-            },
-        )
+        for label, value in ((_("MsgStr"), escape_control_chars(result)), (_("Tag"), POFileEntryTag.REVIEWED.value)):
+            column_index = [f"{column.label}" for column in table.columns.values()].index(label)
+            coordinate = Coordinate(table.cursor_row, column_index)
+            old_value = table.get_cell_at(coordinate)
+            table.update_cell_at(coordinate, value, update_width=True)
+
+            if label == _("MsgStr"):
+                self.notify(
+                    _("Translation updated.")
+                    + "\n"
+                    + _('Previous value was: "{old_value}", current value is: "{new_value}".').format(
+                        old_value=old_value or _("<empty>"), new_value=result or _("<empty>")
+                    ),
+                    timeout=2,
+                    title=_("✅ Success"),
+                )
+
+            self.logger.debug(
+                "Table cell updated",
+                extra={
+                    "row": table.cursor_row,
+                    "column": column_index,
+                    "new_value": value,
+                    "old_value": old_value,
+                    "context": "POReviewScreen.edit_translation",
+                },
+            )
 
     def filter_callback(self, result: Any):
         """Filter the table rows based on a pattern.
@@ -172,15 +182,13 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         self.logger.debug("Filtering table", extra={"pattern": result, "context": "POReviewScreen.filter"})
 
         tmp_table = DataTable[str](zebra_stripes=True)
-        tmp_table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"))
+        tmp_table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"), _("Tag"))
         for cell in self.generate_cells():
-            tmp_table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
+            tmp_table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr, cell.tag)
 
         table: DataTable[str] = self.query_one(DataTable)  # pyright: ignore[reportUnknownVariableType]
         selected_col = table.cursor_column
-
-        cell_key = tmp_table.coordinate_to_cell_key(Coordinate(0, selected_col))
-        column_name = tmp_table.columns[cell_key.column_key].label
+        column_name = list(tmp_table.columns.values())[selected_col].label
 
         table.clear()
         for cell in self.generate_cells():
@@ -188,7 +196,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
                 if not fnmatch(cell[selected_col], result):
                     continue
 
-                table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr)
+                table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr, cell.tag)
 
         self.notify(
             _('Table column "{column}" filtered with "{pattern}".').format(column=column_name, pattern=result),

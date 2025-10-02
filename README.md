@@ -41,7 +41,7 @@ Supported translation services:
 
 ## Demo
 
-[![asciicast](https://asciinema.org/a/JWMSteKuWEp2UBCQJGCbrBdxr.svg)](https://asciinema.org/a/JWMSteKuWEp2UBCQJGCbrBdxr)
+[![ascii cast](https://asciinema.org/a/JWMSteKuWEp2UBCQJGCbrBdxr.svg)](https://asciinema.org/a/JWMSteKuWEp2UBCQJGCbrBdxr)
 
 The app is itself available in German language. Simply run
 

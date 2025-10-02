@@ -11,7 +11,7 @@ from typing import Any, Callable, Literal, LiteralString, Optional, ParamSpec, P
 
 from babel import negotiate_locale
 from babel.messages.frontend import CommandLineInterface
-from deep_translator.exceptions import LanguageNotSupportedException
+from deep_translator.exceptions import LanguageNotSupportedException  # pyright: ignore[reportMissingTypeStubs]
 from textual.notifications import SeverityLevel
 from textual.widget import Widget
 

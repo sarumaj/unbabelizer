@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from gettext import gettext as _
 from pathlib import Path
 from typing import TypedDict
@@ -13,7 +14,7 @@ from textual.widgets import Checkbox, Footer, Header, Input, ProgressBar, Select
 from textual.widgets import Static as Placeholder
 
 from ..log import Logger
-from ..types import POFileHandler, TranslationServices
+from ..types import POFileEntryTag, POFileHandler, TranslationServices
 from ..utils import NotifyException, apply_styles, correct_translation, wait_for_element
 
 
@@ -100,7 +101,7 @@ class Translator(ModalScreen[None], POFileHandler):
             placeholder=_("API Key"), value=self._translation_config.get("api_key") or "", password=True, name="api_key"
         )
         yield Input(
-            placeholder=_("API Key Type (free or paid)"),
+            placeholder=_('API Key Type ("free" or "paid")'),
             value=self._translation_config.get("api_key_type") or "",
             name="api_key_type",
             suggester=SuggestFromList(["free", "paid"]),
@@ -264,6 +265,7 @@ class Translator(ModalScreen[None], POFileHandler):
                 idx,
                 entry,  # pyright: ignore[reportUnknownVariableType]
             ) in enumerate(self.pofile):
+                changed = False
                 if entry.msgid_plural:  # pyright: ignore[reportUnknownMemberType]
                     if override_existing or not all(
                         entry.msgstr_plural.values()  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
@@ -289,10 +291,12 @@ class Translator(ModalScreen[None], POFileHandler):
                             extra={
                                 "msgid": entry.msgid,  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
                                 "msgid_plural": entry.msgid_plural,  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+                                "flags": entry.flags,  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
                                 "context": "Translator.translate_po",
                             },
                         )
                         self.pofile[idx] = entry
+                        changed = True
                     progressbar.advance(2)
                     await asyncio.sleep(0)
 
@@ -315,8 +319,21 @@ class Translator(ModalScreen[None], POFileHandler):
                             },
                         )
                         self.pofile[idx] = entry
+                        changed = True
                     progressbar.advance(1)
                     await asyncio.sleep(0)
+
+                if changed:
+                    entry.tcomment = "\n".join(
+                        (
+                            (entry.tcomment or ""),
+                            " [Translated with {translation_service} on {timestamp}]".format(
+                                translation_service=selected_service.value,
+                                timestamp=datetime.now().isoformat(sep=" ", timespec="seconds"),
+                            ),
+                        )
+                    )
+                    POFileEntryTag.FUZZY.apply(entry)
 
             self.logger.info(
                 "Translation completed, saving PO file...",
