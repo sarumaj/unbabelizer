@@ -1,0 +1,806 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1895.24999925" height="1194.6663680000001" font-family="Consolas, Menlo, 'Bitstream Vera Sans Mono', monospace, 'Powerline Symbols'" font-size="14px">
+  <style>
+    .br { font-weight: bold }
+    .fa { fill-opacity: 0.5 }
+    .it { font-style: italic }
+    .un { text-decoration: underline }
+  </style>
+
+  <rect width="100%" height="100%" style="fill: #000000" rx="4" ry="4"></rect>
+
+  <svg x="8.42333333" y="9.333331000000001" class="default-text-fill">
+    <g style="shape-rendering: optimizeSpeed">
+
+        <rect x="0.0" y="0.0" width="8.42333333" height="18.666662000000002" style="fill: #00005F"></rect><rect x="8.42333333" y="0.0" width="50.539999980000005" height="18.666662000000002" style="fill: #00005F"></rect><rect x="58.96333331" y="0.0" width="8.42333333" height="18.666662000000002" style="fill: #00005F"></rect><rect x="67.38666664" y="0.0" width="1726.7833326500001" height="18.666662000000002" style="fill: #00005F"></rect><rect x="1794.16999929" y="0.0" width="84.2333333" height="18.666662000000002" style="fill: #00005F"></rect>
+
+        <rect x="0.0" y="18.666662000000002" width="1693.08999933" height="18.666662000000002" style="fill: #005F5F"></rect><rect x="1693.08999933" y="18.666662000000002" width="168.4666666" height="18.666662000000002" style="fill: #303030"></rect><rect x="1861.55666593" y="18.666662000000002" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="37.333324000000005" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="37.333324000000005" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="55.99998600000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="55.99998600000001" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="74.66664800000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="74.66664800000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="93.33331000000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="93.33331000000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="111.99997200000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="111.99997200000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="130.66663400000002" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="130.66663400000002" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="149.33329600000002" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="149.33329600000002" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="167.99995800000002" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="167.99995800000002" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="186.66662000000002" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="186.66662000000002" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="205.33328200000003" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="205.33328200000003" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="223.99994400000003" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="223.99994400000003" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="242.66660600000003" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="242.66660600000003" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="261.33326800000003" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="261.33326800000003" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="279.99993" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="279.99993" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="298.66659200000004" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="298.66659200000004" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="317.333254" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="317.333254" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="335.99991600000004" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="335.99991600000004" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="354.666578" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="354.666578" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="373.33324000000005" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="373.33324000000005" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="391.999902" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="391.999902" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="410.66656400000005" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="410.66656400000005" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="429.333226" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="429.333226" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="447.99988800000006" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="447.99988800000006" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="466.66655000000003" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="466.66655000000003" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="485.33321200000006" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="485.33321200000006" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="503.99987400000003" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="503.99987400000003" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="522.6665360000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="522.6665360000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="541.333198" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="541.333198" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="559.99986" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="559.99986" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="578.6665220000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="578.6665220000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="597.3331840000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="597.3331840000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="615.999846" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="615.999846" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="634.666508" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="634.666508" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="653.33317" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="653.33317" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="671.9998320000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="671.9998320000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="690.6664940000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="690.6664940000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="709.333156" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="709.333156" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="727.999818" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="727.999818" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="746.6664800000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="746.6664800000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="765.3331420000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="765.3331420000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="783.999804" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="783.999804" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="802.666466" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="802.666466" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="821.3331280000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="821.3331280000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="839.9997900000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="839.9997900000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="858.666452" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="858.666452" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="877.333114" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="877.333114" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="895.9997760000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="895.9997760000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="914.6664380000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="914.6664380000001" width="16.84666666" height="18.666662000000002" style="fill: #005F5F"></rect>
+
+        <rect x="0.0" y="933.3331000000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="933.3331000000001" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="951.999762" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="951.999762" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="970.6664240000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="970.6664240000001" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="989.3330860000001" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="989.3330860000001" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1007.9997480000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="1007.9997480000001" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1026.66641" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="1026.66641" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1045.3330720000001" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="1045.3330720000001" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1063.999734" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="1063.999734" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1082.666396" width="1861.55666593" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="1082.666396" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1101.3330580000002" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="1101.3330580000002" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1119.99972" width="892.87333298" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="892.87333298" y="1119.99972" width="800.21666635" height="18.666662000000002" style="fill: #0087D7"></rect><rect x="1693.08999933" y="1119.99972" width="168.4666666" height="18.666662000000002" style="fill: #1C1C1C"></rect><rect x="1861.55666593" y="1119.99972" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1138.666382" width="1861.55666593" height="18.666662000000002" style="fill: #262626"></rect><rect x="1861.55666593" y="1138.666382" width="16.84666666" height="18.666662000000002" style="fill: #000000"></rect>
+
+        <rect x="0.0" y="1157.3330440000002" width="25.269999990000002" height="18.666662000000002" style="fill: #00005F"></rect><rect x="25.269999990000002" y="1157.3330440000002" width="42.11666665" height="18.666662000000002" style="fill: #00005F"></rect><rect x="67.38666664" y="1157.3330440000002" width="25.269999990000002" height="18.666662000000002" style="fill: #00005F"></rect><rect x="92.65666663" y="1157.3330440000002" width="117.92666662" height="18.666662000000002" style="fill: #00005F"></rect><rect x="210.58333325" y="1157.3330440000002" width="25.269999990000002" height="18.666662000000002" style="fill: #00005F"></rect><rect x="235.85333324" y="1157.3330440000002" width="101.07999996000001" height="18.666662000000002" style="fill: #00005F"></rect><rect x="336.9333332" y="1157.3330440000002" width="25.269999990000002" height="18.666662000000002" style="fill: #00005F"></rect><rect x="362.20333319" y="1157.3330440000002" width="117.92666662" height="18.666662000000002" style="fill: #00005F"></rect><rect x="480.12999981" y="1157.3330440000002" width="25.269999990000002" height="18.666662000000002" style="fill: #00005F"></rect><rect x="505.3999998" y="1157.3330440000002" width="168.4666666" height="18.666662000000002" style="fill: #00005F"></rect><rect x="673.8666664" y="1157.3330440000002" width="1204.53666619" height="18.666662000000002" style="fill: #00005F"></rect>
+
+
+    </g>
+
+    <text style="fill: #c1c1c1">
+      <tspan y="0.0">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          ⭘
+        </tspan><tspan x="867.60333299" style="fill: #DADADA">
+          UnbabelizerApp
+        </tspan>
+      </tspan><tspan y="18.666662000000002">
+        <tspan dy="1em" x="42.11666665" class="br" style="fill: #DADADA">
+          Type
+        </tspan><tspan x="126.34999995" class="br" style="fill: #DADADA">
+          MsgId
+        </tspan><tspan x="901.29666631" class="br" style="fill: #DADADA">
+          MsgStr
+        </tspan>
+      </tspan><tspan y="37.333324000000005">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          4
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          API key for the translation service, if required
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          API-Schlüssel für den Übersetzungsdienst, falls erforderlich
+        </tspan>
+      </tspan><tspan y="55.99998600000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          5
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Aborted without saving any changes.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Abgebrochen, ohne Änderungen zu speichern.
+        </tspan><tspan x="1861.55666593" style="fill: #005F5F">
+          ▁▁
+        </tspan>
+      </tspan><tspan y="74.66664800000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          6
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Additional keywords to look for in source files
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Zusätzliche Schlüsselwörter, nach denen Sie in Quelldateien suchen sollten
+        </tspan>
+      </tspan><tspan y="93.33331000000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          7
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          All translation files cleared.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Alle Übersetzungsdateien gelöscht.
+        </tspan>
+      </tspan><tspan y="111.99997200000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          8
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          An error occurred: {error}
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Es ist ein Fehler aufgetreten: {error}
+        </tspan>
+      </tspan><tspan y="130.66663400000002">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          9
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Are you sure? This action cannot be undone.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Bist du sicher? Diese Aktion kann nicht rückgängig gemacht werden.
+        </tspan>
+      </tspan><tspan y="149.33329600000002">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          10
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Author of the project
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Autor des Projekts
+        </tspan>
+      </tspan><tspan y="167.99995800000002">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          11
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Cancel
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Stornieren
+        </tspan>
+      </tspan><tspan y="186.66662000000002">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          12
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          ChatGPT Translation Service
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          CHATGPT-Übersetzungsdienst
+        </tspan>
+      </tspan><tspan y="205.33328200000003">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          13
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Clear translation files
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Übersetzungsdateien löschen
+        </tspan>
+      </tspan><tspan y="223.99994400000003">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          14
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Compilation completed.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Zusammenstellung abgeschlossen.
+        </tspan>
+      </tspan><tspan y="242.66660600000003">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          15
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Compile
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Kompilieren
+        </tspan>
+      </tspan><tspan y="261.33326800000003">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          16
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          DeepL Translator
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Tiefes Übersetzer
+        </tspan>
+      </tspan><tspan y="279.99993">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          17
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Destination language code
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Zielsprachcode
+        </tspan>
+      </tspan><tspan y="298.66659200000004">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          18
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Directory for locale files
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Verzeichnis für Gebietsschemasdateien
+        </tspan>
+      </tspan><tspan y="317.333254">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          19
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Domain for the .po files
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Domain für die.po-Dateien
+        </tspan>
+      </tspan><tspan y="335.99991600000004">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          20
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Edit Selected
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Ausgewählt bearbeiten
+        </tspan>
+      </tspan><tspan y="354.666578">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          21
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Editing: &quot;{msgid}&quot; [{idx}]
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Bearbeitung: &quot;{msgid}&quot; [{idx}]
+        </tspan>
+      </tspan><tspan y="373.33324000000005">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          22
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Email of the author
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          E-Mail des Autors
+        </tspan>
+      </tspan><tspan y="391.999902">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          23
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Extract and Update
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Extrahieren und aktualisieren
+        </tspan>
+      </tspan><tspan y="410.66656400000005">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          24
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Extraction and update completed.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Extraktion und Update abgeschlossen.
+        </tspan>
+      </tspan><tspan y="429.333226">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          25
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Filter entries (use * and ? as wildcards).
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Filtereinträge (verwenden * und als ? Wildcards).
+        </tspan>
+      </tspan><tspan y="447.99988800000006">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          26
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Filter rows
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Filterreihen
+        </tspan>
+      </tspan><tspan y="466.66655000000003">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          27
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Google Translate
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Google Translate
+        </tspan>
+      </tspan><tspan y="485.33321200000006">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          28
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          HTTP Proxy
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          HTTP-Proxy
+        </tspan>
+      </tspan><tspan y="503.99987400000003">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          29
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          HTTP proxy URL
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          HTTP-Proxy-URL
+        </tspan>
+      </tspan><tspan y="522.6665360000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          30
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          HTTPS Proxy
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Https Proxy
+        </tspan>
+      </tspan><tspan y="541.333198">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          31
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          HTTPS proxy URL
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          HTTPS-Proxy-URL
+        </tspan>
+      </tspan><tspan y="559.99986">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          32
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Line width for .po files
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Zeilenbreite für.po-Dateien
+        </tspan>
+      </tspan><tspan y="578.6665220000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          33
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Microsoft Translator
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Microsoft-Übersetzer
+        </tspan>
+      </tspan><tspan y="597.3331840000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          34
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Model
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Modell
+        </tspan>
+      </tspan><tspan y="615.999846">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          35
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Model to use for the translation service, if applicable
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Modell, die für den Übersetzungsdienst verwendet werden, falls zutreffend
+        </tspan>
+      </tspan><tspan y="634.666508">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          36
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          MsgId
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Msgid
+        </tspan>
+      </tspan><tspan y="653.33317">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          37
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          MsgStr
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Msgstr
+        </tspan>
+      </tspan><tspan y="671.9998320000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          38
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Must be &#39;free&#39; or &#39;paid&#39;
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Muss &quot;frei&quot; oder &quot;bezahlt&quot; sein
+        </tspan>
+      </tspan><tspan y="690.6664940000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          39
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          MyMemory Translator
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          MYMEMORY-Übersetzer
+        </tspan>
+      </tspan><tspan y="709.333156">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          40
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          No entry found for the selected cell. Restart the application.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Kein Eintrag für die ausgewählte Zelle gefunden. Starten Sie die Anwendung neu.
+        </tspan>
+      </tspan><tspan y="727.999818">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          41
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          OK
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          OK
+        </tspan>
+      </tspan><tspan y="746.6664800000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          42
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Override existing translations
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Übersetzen vorhandene Übersetzungen
+        </tspan>
+      </tspan><tspan y="765.3331420000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          43
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          PO file saved to &quot;{path}&quot;.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          PO-Datei in &quot;{path}&quot; gespeichert.
+        </tspan>
+      </tspan><tspan y="783.999804">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          44
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Path to the Babel mapping file (as CLI argument) or its content (in pyproject.toml config)
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Pfad zur Babel-Mapping-Datei (als CLI-Argument) oder dessen Inhalt (in pyproject.toml config)
+        </tspan>
+      </tspan><tspan y="802.666466">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          45
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Paths to exclude from searching
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Pfade, die von der Suche ausgeschlossen werden müssen
+        </tspan>
+      </tspan><tspan y="821.3331280000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          46
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Paths to search for source files
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Wege zur Suche nach Quelldateien
+        </tspan>
+      </tspan><tspan y="839.9997900000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          47
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Previous value was: &quot;{old_value}&quot;, current value is: &quot;{new_value}&quot;.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Der frühere Wert war: &quot;{old_value}&quot;, der aktuelle Wert lautet: &quot;{new_value}&quot;.
+        </tspan>
+      </tspan><tspan y="858.666452">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          48
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Quit
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Aufhören
+        </tspan>
+      </tspan><tspan y="877.333114">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          49
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Quit and Save
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Kündigen und speichern
+        </tspan>
+      </tspan><tspan y="895.9997760000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          50
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Quit without Saving
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Aufhören, ohne zu retten
+        </tspan>
+      </tspan><tspan y="914.6664380000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          51
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Region
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Region
+        </tspan><tspan x="1861.55666593" style="fill: #000000">
+          ▅▅
+        </tspan>
+      </tspan><tspan y="933.3331000000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          52
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Region for the translation service, if applicable
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Region für den Übersetzungsdienst gegebenenfalls zutreffend
+        </tspan>
+      </tspan><tspan y="951.999762">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          53
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Reset the filter to select an entry to edit.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Setzen Sie den Filter zurück, um einen Eintrag zum Bearbeiten auszuwählen.
+        </tspan>
+      </tspan><tspan y="970.6664240000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          54
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Review
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Rezension
+        </tspan>
+      </tspan><tspan y="989.3330860000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          55
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Run Workflow
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Workflow ausführen
+        </tspan>
+      </tspan><tspan y="1007.9997480000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          56
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Save
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Speichern
+        </tspan>
+      </tspan><tspan y="1026.66641">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          57
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Select Translation Service
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Wählen Sie den Übersetzungsdienst
+        </tspan>
+      </tspan><tspan y="1045.3330720000001">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          58
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Select target language
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Wählen Sie Zielsprache
+        </tspan>
+      </tspan><tspan y="1063.999734">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          59
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Source language code
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Quellsprachcode
+        </tspan>
+      </tspan><tspan y="1082.666396">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          60
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Submit
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Einreichen
+        </tspan>
+      </tspan><tspan y="1101.3330580000002">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          61
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Table column &quot;{column}&quot; filtered with &quot;{pattern}&quot;.
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Tabellenspalte &quot;{pattern}&quot; mit &quot;{muster}&quot; gefiltert.
+        </tspan>
+      </tspan><tspan y="1119.99972">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          62
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Target language
+        </tspan><tspan x="901.29666631" class="br" style="fill: #D7FFFF">
+          Zielsprache
+        </tspan>
+      </tspan><tspan y="1138.666382">
+        <tspan dy="1em" x="8.42333333" style="fill: #DADADA">
+          63
+        </tspan><tspan x="42.11666665" style="fill: #DADADA">
+          Singular
+        </tspan><tspan x="126.34999995" style="fill: #DADADA">
+          Title of the project
+        </tspan><tspan x="901.29666631" style="fill: #DADADA">
+          Titel des Projekts
+        </tspan>
+      </tspan><tspan y="1157.3330440000002">
+        <tspan dy="1em" x="8.42333333" class="br" style="fill: #FFAF00">
+          s 
+        </tspan><tspan x="25.269999990000002" style="fill: #DADADA">
+          Save 
+        </tspan><tspan x="75.80999997" class="br" style="fill: #FFAF00">
+          e 
+        </tspan><tspan x="92.65666663" style="fill: #DADADA">
+          Edit Selected 
+        </tspan><tspan x="219.00666658" class="br" style="fill: #FFAF00">
+          f 
+        </tspan><tspan x="235.85333324" style="fill: #DADADA">
+          Filter rows 
+        </tspan><tspan x="345.35666653" class="br" style="fill: #FFAF00">
+          q 
+        </tspan><tspan x="362.20333319" style="fill: #DADADA">
+          Quit and Save 
+        </tspan><tspan x="488.55333314" class="br" style="fill: #FFAF00">
+          a 
+        </tspan><tspan x="505.3999998" style="fill: #DADADA">
+          Quit without Saving 
+        </tspan>
+      </tspan>
+    </text>
+  </svg>
+
+  <g transform="translate(-40 -40)">
+    <svg x="50%" y="50%" width="80" height="80">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000.0 1000.0" style="filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.4))">
+  <defs>
+    <mask id="small-triangle-mask">
+      <rect width="100%" height="100%" fill="white"></rect>
+      <polygon points="700.0 500.0, 400.00000000000006 326.7949192431122, 399.9999999999999 673.2050807568877" fill="black">
+      </polygon>
+    </mask>
+  </defs>
+  <polygon points="1000.0 500.0, 250.0000000000001 66.98729810778059, 249.99999999999977 933.0127018922192" mask="url(#small-triangle-mask)" fill="white">
+  </polygon>
+  <polyline points="673.2050807568878 400.0, 326.7949192431123 600.0" stroke="white" stroke-width="90">
+  </polyline>
+</svg>
+    </svg>
+  </g>
+</svg>
