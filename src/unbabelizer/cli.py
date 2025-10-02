@@ -20,7 +20,7 @@ def main(args: list[str] | None = None):
     try:
         config = Config.build(args)
         logger.info("Running unbabelizerApp with config:", extra={"context": "cli.main", "config": config})
-        app = UnbabelizerApp(config)
+        app = UnbabelizerApp(config, logger)
         logger.info("Starting unbabelizerApp...")
         app.run()
         logger.info("unbabelizerApp has terminated gracefully.")
