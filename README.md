@@ -15,6 +15,8 @@ managing gettext `.po` translation files.
 It streamlines the localization workflow for Python projects by automating
 extraction, translation, review, and compilation of translation files.
 
+Read 👉 [Medium Blog Article](https://medium.com/stackademic/from-the-chaos-of-babel-to-app-translation-bliss-5afba78fc774) 👈 to learn more.
+
 ## Purpose
 
 The main goal of `unbabelizer` is to simplify and automate the process of
