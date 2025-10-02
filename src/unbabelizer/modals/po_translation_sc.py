@@ -251,7 +251,7 @@ class Translator(ModalScreen[None], POFileHandler):
                 "config": self._translation_config,
             },
         )
-        with NotifyException(self):
+        with NotifyException(self, self.logger):
             translator = selected_service.translation_service_protocol(self._translation_config)  # type: ignore[reportArgumentType]
 
             self.notify(

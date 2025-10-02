@@ -184,7 +184,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
 
         table.clear()
         for cell in self.generate_cells():
-            with NotifyException(self):
+            with NotifyException(self, self.logger):
                 if not fnmatch(cell[selected_col], result):
                     continue
 

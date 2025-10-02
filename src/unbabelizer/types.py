@@ -1,10 +1,9 @@
 from enum import Enum
 from gettext import gettext as _
 from pathlib import Path
-from typing import Any, Dict, NamedTuple, Protocol, Tuple, Type, TypedDict
+from typing import NamedTuple, Protocol, Tuple, Type, TypedDict
 
 import polib
-from babel import negotiate_locale
 from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
     ChatGptTranslator,
     DeeplTranslator,
@@ -13,11 +12,8 @@ from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
     MyMemoryTranslator,
     YandexTranslator,
 )
-from deep_translator.constants import (  # pyright: ignore[reportMissingTypeStubs]
-    DEEPL_LANGUAGE_TO_CODE,
-    GOOGLE_LANGUAGES_TO_CODES,
-    MY_MEMORY_LANGUAGES_TO_CODES,
-)
+
+from .utils import handle_unsupported_language
 
 
 class TranslationServiceConfig(TypedDict):
@@ -32,9 +28,11 @@ class TranslationServiceConfig(TypedDict):
 
 class DeeplTranslationService(DeeplTranslator):
     def __init__(self, config: TranslationServiceConfig):
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=negotiate_locale([config["source"]], DEEPL_LANGUAGE_TO_CODE.values()) or config["source"],
-            target=negotiate_locale([config["target"]], DEEPL_LANGUAGE_TO_CODE.values()) or config["target"],
+        handle_unsupported_language(
+            super().__init__  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        )(
+            source=config["source"],
+            target=config["target"],
             api_key=config["api_key"],
             use_free_api=config.get("api_key_type", "free") == "free",
         )
@@ -61,9 +59,11 @@ class DeeplTranslationService(DeeplTranslator):
 
 class GoogleTranslationService(GoogleTranslator):
     def __init__(self, config: TranslationServiceConfig):
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=negotiate_locale([config["source"]], GOOGLE_LANGUAGES_TO_CODES.values()) or config["source"],
-            target=negotiate_locale([config["target"]], GOOGLE_LANGUAGES_TO_CODES.values()) or config["target"],
+        handle_unsupported_language(
+            super().__init__  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        )(
+            source=config["source"],
+            target=config["target"],
             proxies=config["proxies"],
         )
 
@@ -89,19 +89,11 @@ class GoogleTranslationService(GoogleTranslator):
 
 class MyMemoryTranslationService(MyMemoryTranslator):
     def __init__(self, config: TranslationServiceConfig):
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=negotiate_locale(
-                [config["source"]],
-                MY_MEMORY_LANGUAGES_TO_CODES.values(),
-                sep="-",
-            )
-            or config["source"],
-            target=negotiate_locale(
-                [config["target"]],
-                MY_MEMORY_LANGUAGES_TO_CODES.values(),
-                sep="-",
-            )
-            or config["target"],
+        handle_unsupported_language(
+            super().__init__  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        )(
+            source=config["source"],
+            target=config["target"],
             proxies=config["proxies"],
         )
 
@@ -128,28 +120,11 @@ class MyMemoryTranslationService(MyMemoryTranslator):
 
 class MicrosoftTranslationService(MicrosoftTranslator):
     def __init__(self, config: TranslationServiceConfig):
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
+        handle_unsupported_language(
+            super().__init__  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        )(
             source=config["source"],
             target=config["target"],
-            api_key=config["api_key"],
-            region=config["region"],
-            proxies=config["proxies"],
-        )
-        # TODO: evaluate and store as constant type
-        MICROSOFT_LANGUAGES_TO_CODES = self.get_supported_languages(  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType] # keep at one line
-            as_dict=True
-        )
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=negotiate_locale(
-                [config["source"]],
-                MICROSOFT_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
-            )
-            or config["source"],
-            target=negotiate_locale(
-                [config["target"]],
-                MICROSOFT_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
-            )
-            or config["target"],
             api_key=config["api_key"],
             region=config["region"],
             proxies=config["proxies"],
@@ -178,24 +153,11 @@ class MicrosoftTranslationService(MicrosoftTranslator):
 class YandexTranslationService(YandexTranslator):
     def __init__(self, config: TranslationServiceConfig):
         self._proxies = config["proxies"]
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=config["source"], target=config["target"], api_key=config["api_key"]
-        )
-        # TODO: evaluate and store as constant type
-        YANDEX_LANGUAGES_TO_CODES = self.get_supported_languages(  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType] # keep at one line
-            as_dict=True
-        )
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=negotiate_locale(
-                [config["source"]],
-                YANDEX_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
-            )
-            or config["source"],
-            target=negotiate_locale(
-                [config["target"]],
-                YANDEX_LANGUAGES_TO_CODES.values(),  # pyright: ignore[reportUnknownArgumentType, reportUnknownMemberType, reportAttributeAccessIssue]
-            )
-            or config["target"],
+        handle_unsupported_language(
+            super().__init__  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        )(
+            source=config["source"],
+            target=config["target"],
             api_key=config["api_key"],
         )
 
@@ -221,9 +183,9 @@ class YandexTranslationService(YandexTranslator):
 
 class ChatGPTTranslationService(ChatGptTranslator):
     def __init__(self, config: TranslationServiceConfig):
-        super().__init__(  # pyright: ignore[reportUnknownMemberType]
-            source=config["source"], target=config["target"], api_key=config["api_key"], model=config["model"]
-        )
+        handle_unsupported_language(
+            super().__init__  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+        )(source=config["source"], target=config["target"], api_key=config["api_key"], model=config["model"])
 
     @classmethod
     def needs_api_key(cls) -> bool:
@@ -344,15 +306,3 @@ class TableCell(NamedTuple):
     type: str
     msgid: str
     msgstr: str
-
-
-class SingletonType(type):
-    """A metaclass for singleton classes."""
-
-    _instances: Dict[str, object] = {}
-
-    def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
-        if name not in cls._instances:
-            instance = super().__new__(cls, name, bases, attrs)
-            cls._instances[name] = instance
-        return cls._instances[name]

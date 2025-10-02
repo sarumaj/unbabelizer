@@ -3,10 +3,8 @@ import logging.handlers
 from pathlib import Path
 from typing import Any
 
-from .types import SingletonType
 
-
-class Logger(logging.LoggerAdapter[Any], metaclass=SingletonType):
+class Logger(logging.LoggerAdapter[Any]):
     """A singleton logger class for the application."""
 
     def __init__(self, log_name: str = "unbabelizer", log_level: int = logging.DEBUG):

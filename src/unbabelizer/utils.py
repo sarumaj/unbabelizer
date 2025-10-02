@@ -1,12 +1,17 @@
 import asyncio
 import re
 import traceback
+from ast import literal_eval
+from collections import Counter
 from contextlib import AbstractContextManager
+from functools import wraps
 from gettext import gettext as _
 from types import TracebackType
 from typing import Any, Callable, Literal, LiteralString, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar, Union
 
+from babel import negotiate_locale
 from babel.messages.frontend import CommandLineInterface
+from deep_translator.exceptions import LanguageNotSupportedException
 from textual.notifications import SeverityLevel
 from textual.widget import Widget
 
@@ -31,14 +36,14 @@ class NotifyProtocol(Protocol):
 class NotifyException(AbstractContextManager["NotifyException"]):
     """A context manager that notifies the user of any exceptions that occur within its block."""
 
-    def __init__(self, notifier: NotifyProtocol):
+    def __init__(self, notifier: NotifyProtocol, logger: Logger):
         """Initialize the NotifyException context manager.
 
         Args:
             notifier (NotifyProtocol): An object with a notify method to send notifications.
         """
         self.notifier = notifier
-        self.logger = Logger()
+        self.logger = logger
 
     def __exit__(
         self,
@@ -109,6 +114,34 @@ def correct_translation(msgid: str, translation: str) -> str:
     return translation.strip()
 
 
+def determine_most_common_locale_separator(locales: Sequence[str]) -> str:
+    """Determine the most common locale separator in a list of locales.
+    Args:
+        locales (Sequence[str]): A list of locale strings.
+    Returns:
+        str: The most common locale separator ("-" or "_"). If there is a tie or
+             no separators found, returns "_".
+    """
+    counter = Counter(
+        sep
+        for locale in locales
+        for sep in ("-" if "-" in locale else "_" if "_" in locale else None,)
+        if sep is not None
+    )
+
+    results = counter.most_common(2)
+    if not results:
+        return "_"
+
+    if len(results) == 1:
+        return results[0][0]
+
+    if results[0][1] == results[1][1]:
+        return "_"
+
+    return results[0][0]
+
+
 def escape_control_chars(text: str) -> str:
     """Escape control characters using character class pattern"""
 
@@ -151,6 +184,67 @@ def get_base_type(ann: Any) -> Any:
         return type(ann.__args__[0])  # pyright: ignore[reportUnknownVariableType]
 
     return ann
+
+
+def handle_unsupported_language(func: Callable[P, R]) -> Callable[P, R]:
+    """Decorator to handle LanguageNotSupportedException by negotiating closest supported language.
+    If negotiation fails, the original exception is raised.
+
+    Args:
+        func (Callable[P, R]): The function to be decorated.
+
+    Returns:
+        Callable[P, R]: The wrapped function with enhanced error handling.
+    """
+
+    @wraps(func)
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        try:
+            return func(*args, **kwargs)
+        except LanguageNotSupportedException as e:
+            match = next(re.finditer(r"^.*(\{.+\})$", f"{e.message}", re.MULTILINE), None)
+            if not match:
+                raise e
+
+            supported_languages_dict = literal_eval(match.group(1))
+            if not isinstance(supported_languages_dict, dict):
+                raise e
+
+            supported_languages = [
+                f"{l}" for l in supported_languages_dict.values()  # pyright: ignore[reportUnknownVariableType]
+            ]
+
+            separator = determine_most_common_locale_separator(supported_languages)
+            if len(args) >= 2 and all(isinstance(arg, str) for arg in args[:2]):
+                source = negotiate_locale(
+                    [args[0]], supported_languages, sep=separator  # pyright: ignore[reportArgumentType]
+                )
+                target = negotiate_locale(
+                    [args[1]], supported_languages, sep=separator  # pyright: ignore[reportArgumentType]
+                )
+                if not source or not target:
+                    raise e
+
+                args = (source, target, *args[2:])  # pyright: ignore[reportAssignmentType]
+                return func(*args, **kwargs)
+
+            if all(isinstance(v, str) for k, v in kwargs.items() if k in ("source", "target")):
+                source = negotiate_locale(
+                    [kwargs["source"]], supported_languages, sep=separator  # pyright: ignore[reportArgumentType]
+                )
+                target = negotiate_locale(
+                    [kwargs["target"]], supported_languages, sep=separator  # pyright: ignore[reportArgumentType]
+                )
+                if not source or not target:
+                    raise e
+
+                kwargs["source"] = source
+                kwargs["target"] = target
+                return func(*args, **kwargs)
+
+            raise e
+
+    return wrapper
 
 
 def run_babel_cmd(args: Sequence[str]):

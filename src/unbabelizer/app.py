@@ -35,14 +35,14 @@ class UnbabelizerApp(App[None]):
         Binding(key="c", action="clear", description=_("Clear translation files"), show=True),
     ]
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, logger: Logger | None):
         """Initialize the unbabelizerApp with the given configuration.
 
         Args:
             config (Config): The configuration for the application.
         """
         super().__init__()
-        self._app_logger = Logger()
+        self._app_logger = logger or Logger()
         self._config = config
         self._config.locale_dir.mkdir(parents=True, exist_ok=True)
         self._lock = asyncio.Lock()
@@ -132,7 +132,7 @@ class UnbabelizerApp(App[None]):
                 return
 
             self.logger.info("Clearing translation files...", extra={"context": "unbabelizerApp.clear"})
-            with NotifyException(self):
+            with NotifyException(self, self.logger):
                 for path in self._config.locale_dir.rglob("*"):
                     if path.is_file():
                         self.logger.debug("Removing file", extra={"path": path, "context": "unbabelizerApp.clear"})
@@ -187,7 +187,7 @@ class UnbabelizerApp(App[None]):
         )
 
         async with self._lock:
-            with NotifyException(self):
+            with NotifyException(self, self.logger):
                 # Extraction (overwrite existing .pot file)
                 mapping_file = self._config.locale_dir / "babel_mapping.txt"
                 self.logger.debug(
@@ -269,7 +269,7 @@ class UnbabelizerApp(App[None]):
         """Compile .po files into .mo files."""
         self.logger.info("Compiling translations...", extra={"context": "unbabelizerApp.flow_compile_translations"})
         async with self._lock:
-            with NotifyException(self):
+            with NotifyException(self, self.logger):
                 run_babel_cmd(["compile"] + ["-D", self._config.domain] + ["-d", str(self._config.locale_dir)])
                 self.logger.info(
                     "Compilation completed.", extra={"context": "unbabelizerApp.flow_compile_translations"}
