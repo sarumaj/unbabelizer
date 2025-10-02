@@ -1,3 +1,4 @@
+from datetime import datetime
 from gettext import gettext as _
 
 import polib
@@ -8,6 +9,7 @@ from textual.screen import ModalScreen
 from textual.widgets import Footer, Input, Static
 
 from ..log import Logger
+from ..types import POFileEntryTag
 from ..utils import apply_styles, escape_control_chars, unescape_control_chars, wait_for_element
 
 
@@ -100,7 +102,6 @@ class POEditScreen(ModalScreen[str]):
             width="1fr",
             vertical="top",
         )
-
         yield apply_styles(
             Input(
                 valid_empty=True,
@@ -144,6 +145,16 @@ class POEditScreen(ModalScreen[str]):
             self.entry.msgstr = orig_val
         else:
             self.entry.msgstr_plural[self.idx] = orig_val  # pyright: ignore[reportUnknownMemberType]
+
+        POFileEntryTag.REVIEWED.apply(self.entry)
+        self.entry.tcomment = "\n".join(
+            (
+                (self.entry.tcomment or ""),
+                " [Manually edited on {timestamp}]".format(
+                    timestamp=datetime.now().isoformat(sep=" ", timespec="seconds"),
+                ),
+            )
+        )
 
         self.dismiss(new_val)
         self.logger.info(
