@@ -1,23 +1,67 @@
 import argparse
-import gettext
 import sys
 import tomllib
 from importlib.metadata import version as pkg_version
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, overload
 
 import jmespath
 from pydantic import BaseModel, Field
 
 from .log import Logger
-from .types import TranslationServiceConfig, TranslationServices
+from .types.subcommand import SubCommandChoices, SubCommands
+from .types.translation_service.config import Presets as TranslationServicePresets
+from .types.translation_service.config import TranslationServiceConfig
+from .types.translation_service.services import TranslationServices
 from .utils import get_base_type
 
-_ = gettext.gettext
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
+
+
 logger = Logger()
 
 
-class Config(BaseModel):
+class Presets(BaseModel):
+    workflow_actions: List[SubCommandChoices] = Field(
+        default=["extract_update", "review", "compile"],
+        description=_("Actions to perform in the workflow"),
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.presets.workflow_actions",
+            "argparse.flag": "--presets-workflow-actions",
+            "argparse.choices": ["extract_update", "translate", "review", "compile"],
+        },
+    )
+    override_existing_translations: bool = Field(
+        default=False,
+        description=_("Override existing translations"),
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.presets.override_existing_translations",
+            "argparse.flag": "--presets-override-existing-translations",
+        },
+    )
+    fuzzy_new_translations: bool = Field(
+        default=False,
+        description=_("Mark new translations as fuzzy"),
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.presets.fuzzy_new_translations",
+            "argparse.flag": "--presets-fuzzy-new-translations",
+        },
+    )
+    default_translation_service: str = Field(
+        default=TranslationServices.GOOGLE_TRANSLATE.translation_service_name,
+        description=_("Default translation service to use"),
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.presets.default_translation_service",
+            "argparse.flag": "--presets-default-translation-service",
+            "argparse.choices": [s.translation_service_name for s in TranslationServices],
+        },
+    )
+
+
+class Config(Presets):
     """unbabelizer loads configuration from pyproject.toml and command line arguments."""
 
     author: str = Field(
@@ -124,23 +168,21 @@ class Config(BaseModel):
         description=_("Region for the translation service, if applicable"),
         json_schema_extra={"pyproject.toml": "tool.unbabelizer.region", "argparse.flag": "--region"},
     )
-    fuzzy_new_translations: bool = Field(
-        default=False,
-        description=_("Mark new translations as fuzzy"),
-        json_schema_extra={
-            "pyproject.toml": "tool.unbabelizer.fuzzy_new_translations",
-            "argparse.flag": "--fuzzy-new-translations",
-        },
-    )
-    default_translation_service: str = Field(
-        default=TranslationServices.GOOGLE_TRANSLATE.value,
-        description=_("Default translation service to use"),
-        json_schema_extra={
-            "pyproject.toml": "tool.unbabelizer.default_translation_service",
-            "argparse.flag": "--default-translation-service",
-            "argparse.choices": [s.value for s in TranslationServices],
-        },
-    )
+
+    @property
+    def presets(self) -> TranslationServicePresets:
+        return TranslationServicePresets(
+            workflow_actions=self.workflow_actions,
+            override_existing_translations=self.override_existing_translations,
+            fuzzy_new_translations=self.fuzzy_new_translations,
+            default_translation_service=self.default_translation_service,
+        )
+
+    def is_workflow_action_enabled(self, action: SubCommands, default: bool) -> bool:
+        if self.presets["workflow_actions"] is None:
+            return default
+
+        return action.command_name in self.presets["workflow_actions"]
 
     def get_translation_config(self, dest_lang_index: int) -> TranslationServiceConfig:
         """Prepare the configuration dictionary for the translation service."""
@@ -149,19 +191,10 @@ class Config(BaseModel):
             "target": self.dest_lang[dest_lang_index],
             "api_key": self.api_key,
             "api_key_type": self.api_key_type,
-            "proxies": {
-                k: v
-                for k, v in {
-                    "http": self.http_proxy,
-                    "https": self.https_proxy,
-                }.items()
-                if v is not None
-            }
-            or None,
+            "proxies": {k: v for k, v in {"http": self.http_proxy, "https": self.https_proxy}.items() if v} or None,
             "model": self.model,
             "region": self.region,
-            "fuzzy_new_translations": self.fuzzy_new_translations,
-            "default_translation_service": self.default_translation_service,
+            "presets": self.presets,
         }
 
     @classmethod

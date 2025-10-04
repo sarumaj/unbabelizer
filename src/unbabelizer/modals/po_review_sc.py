@@ -12,7 +12,10 @@ from textual.screen import ModalScreen
 from textual.widgets import DataTable, Footer, Header, Label
 
 from ..log import Logger
-from ..types import Note, POFileEntryTag, POFileHandler, TableRow
+from ..types.note import Note
+from ..types.po_file.handler import POFileHandler
+from ..types.po_file.tag import POFileEntryTag
+from ..types.table_row import TableRow
 from ..utils import apply_styles, escape_control_chars, handle_exception, wait_for_element
 from .confirm_inevitable import ConfirmInevitable
 from .po_edit_sc import POEditScreen
