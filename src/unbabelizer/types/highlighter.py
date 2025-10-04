@@ -48,9 +48,9 @@ class RegexHighlighter(Highlighter):
 class FStringHighlighter(RegexHighlighter):
     """A highlighter for f-strings in Python."""
 
-    highlights = [
+    highlights = [  # cSpell:ignore bravf0nt
         r"(?P<expression>\{[^\{\}]+\})",  # Highlight expressions within {}
-        r"(?P<escape>\\{1,2}.)",  # Highlight escape sequences
+        r"(?P<escape>\\[bravf0nt\\])",  # Highlight escape sequences: backslash followed by control character
     ]
     base_style = "fstring."
     theme = Theme(

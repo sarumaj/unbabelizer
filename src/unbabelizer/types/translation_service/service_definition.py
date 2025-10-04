@@ -10,9 +10,6 @@ from deep_translator.exceptions import LanguageNotSupportedException  # pyright:
 from ...translation import determine_most_common_locale_separator
 from .config import TranslationServiceConfig
 
-P = ParamSpec("P")
-R = TypeVar("R")
-
 
 class TranslationServiceProtocol(Protocol):
     def __init__(self, config: TranslationServiceConfig): ...
@@ -25,6 +22,10 @@ class TranslationServiceProtocol(Protocol):
     @classmethod
     def supports_proxies(cls) -> bool: ...
     async def translate(self, text: str) -> str: ...
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 class TranslationServiceBase(metaclass=ABCMeta):

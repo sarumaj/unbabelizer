@@ -1,4 +1,4 @@
-from typing import TypeAlias, TypedDict
+from typing import Dict, List, TypeAlias, TypedDict
 
 from ..subcommand import SubCommandChoices
 
@@ -7,10 +7,10 @@ class Presets(TypedDict):
     override_existing_translations: bool | None
     fuzzy_new_translations: bool | None
     default_translation_service: str | None
-    workflow_actions: list[SubCommandChoices] | None
+    workflow_actions: List[SubCommandChoices] | None
 
 
-Proxies: TypeAlias = dict[str, str | None] | None
+Proxies: TypeAlias = Dict[str, str | None]
 
 
 class TranslationServiceConfig(TypedDict):

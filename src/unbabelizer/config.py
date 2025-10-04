@@ -32,6 +32,7 @@ class Presets(BaseModel):
             "pyproject.toml": "tool.unbabelizer.presets.workflow_actions",
             "argparse.flag": "--presets-workflow-actions",
             "argparse.choices": ["extract_update", "translate", "review", "compile"],
+            "argparse.nargs": "*",
         },
     )
     override_existing_translations: bool = Field(
@@ -88,7 +89,11 @@ class Config(Presets):
     input_paths: List[Path] = Field(
         default=[Path.cwd()],
         description=_("Paths to search for source files"),
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.input_paths", "argparse.flag": "--input-paths"},
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.input_paths",
+            "argparse.flag": "--input-paths",
+            "argparse.nargs": "+",
+        },
     )
     exclude_patterns: List[str] = Field(
         default=[],
@@ -96,6 +101,7 @@ class Config(Presets):
         json_schema_extra={
             "pyproject.toml": "tool.unbabelizer.exclude_patterns",
             "argparse.flag": "--exclude-patterns",
+            "argparse.nargs": "*",
         },
     )
     src_lang: str = Field(
@@ -105,7 +111,11 @@ class Config(Presets):
     )
     dest_lang: List[str] = Field(
         description=_("Destination language code"),
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.dest_lang", "argparse.flag": "--dest-lang"},
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.dest_lang",
+            "argparse.flag": "--dest-lang",
+            "argparse.nargs": "+",
+        },
     )
     domain: str = Field(
         default="messages",
@@ -131,7 +141,11 @@ class Config(Presets):
     keywords: List[str] = Field(
         default=[],
         description=_("Additional keywords to look for in source files"),
-        json_schema_extra={"pyproject.toml": "tool.unbabelizer.keywords", "argparse.flag": "--keywords"},
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.keywords",
+            "argparse.flag": "--keywords",
+            "argparse.nargs": "+",
+        },
     )
     http_proxy: Optional[str] = Field(
         default=None,
@@ -216,20 +230,29 @@ class Config(Presets):
             choices = schema.get(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
                 "argparse.choices", None
             )
+            nargs = schema.get(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+                "argparse.nargs", None
+            )
             config_field = schema.get(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-                "pyproject.toml", name
+                "pyproject.toml", None
             )
             if choices is not None and not isinstance(choices, list):
                 choices = [choices]  # pyright: ignore[reportUnknownVariableType]
             parser.add_argument(
                 flag,  # pyright: ignore[reportArgumentType]
-                help=(field.description or "")
-                + " "
-                + _('(overrides pyproject.toml setting: "{config_field}")').format(
-                    config_field=config_field  # pyright: ignore[reportUnknownArgumentType]
+                help=(
+                    (field.description or "")
+                    + (
+                        " "
+                        + _('(overrides pyproject.toml setting: "{config_field}")').format(
+                            config_field=config_field  # pyright: ignore[reportUnknownArgumentType]
+                        )
+                    )
+                    if config_field
+                    else ""
                 ),
                 default=None,
-                nargs=None if field.annotation is not list else "+",
+                nargs=nargs,  # pyright: ignore[reportArgumentType]
                 type=get_base_type(field.annotation),
                 choices=choices,  # pyright: ignore[reportUnknownArgumentType]
             )

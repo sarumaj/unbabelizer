@@ -23,6 +23,8 @@ class TranslationServiceEntry(NamedTuple):
 
 
 class TranslationServices(Enum):
+    """Enumeration of supported translation services."""
+
     GOOGLE_TRANSLATE = TranslationServiceEntry(_("Google Translate"), GoogleTranslationService)
     MY_MEMORY = TranslationServiceEntry(_("MyMemory Translator"), MyMemoryTranslationService)
     MICROSOFT_TRANSLATE = TranslationServiceEntry(_("Microsoft Translator"), MicrosoftTranslationService)
@@ -32,6 +34,7 @@ class TranslationServices(Enum):
 
     @classmethod
     def from_service_name(cls, name: str) -> "TranslationServices":
+        """Get the enum member corresponding to the given service name."""
         for service in cls:
             if service.name == name or service.value.name == name:
                 return service
@@ -39,8 +42,10 @@ class TranslationServices(Enum):
 
     @property
     def translation_service_name(self) -> str:
+        """Get the human-readable name of the translation service."""
         return self.value.name
 
     @property
     def translation_service_protocol(self) -> Type[TranslationServiceProtocol]:
+        """Get the class implementing the translation service protocol."""
         return self.value.service

@@ -17,6 +17,8 @@ class SubCommand(NamedTuple):
 
 
 class SubCommands(Enum):
+    """Enumeration of sub-commands."""
+
     EXTRACT_UPDATE = SubCommand("extract_update", _("Extract and Update"), False, True)
     TRANSLATE = SubCommand("translate", _("Translate"), True, False)
     REVIEW = SubCommand("review", _("Review"), True, True)

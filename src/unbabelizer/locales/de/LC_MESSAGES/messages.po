@@ -11,76 +11,89 @@ msgstr ""
 "POT-Creation-Date: 2025-10-04 02:43+0200\n"
 "PO-Revision-Date: 2025-10-04 02:43+0200\n"
 "Last-Translator: 71898979+sarumaj@users.noreply.github.com\n"
-"Language: de\n"
 "Language-Team: de <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.17.0\n"
 
 # [Translated with Google Translate on 2025-10-04 02:43:35]
 # [Manually edited on 2025-10-04 02:44:58]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:195
+# [Manually edited on 2025-10-04 23:30:20]
+# [Manually edited on 2025-10-04 23:30:34]
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:247
 #, python-brace-format, reviewed
 msgid "(overrides pyproject.toml setting: \"{config_field}\")"
 msgstr "(Überschreibt pyproject.toml Einstellung: \"{config_field}\")"
 
 # [Translated with Google Translate on 2025-10-04 02:43:36]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:212
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:215
 #, unconfirmed
 msgid "<empty>"
 msgstr "<leer>"
 
 # [Translated with Google Translate on 2025-10-04 02:43:36]
 # [Manually edited on 2025-10-04 03:45:12]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:122
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:125
 #, reviewed
 msgid "API Key"
 msgstr "API-Schlüssel"
 
 # [Translated with Google Translate on 2025-10-04 02:43:36]
 # [Manually edited on 2025-10-04 02:45:12]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:131
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:134
 #, reviewed
 msgid "API Key Type (\"free\" or \"paid\")"
 msgstr "API-Schlüsseltyp (\"free\" oder \"paid\")"
 
 # [Translated with Google Translate on 2025-10-04 02:43:37]
 # [Manually edited on 2025-10-04 03:39:57]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:104
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:162
 #, reviewed
 msgid "API key for the translation service, if required"
 msgstr "API-Schlüssel für den Übersetzungsdienst, falls erforderlich"
 
 # [Translated with Google Translate on 2025-10-04 02:43:37]
 # [Manually edited on 2025-10-04 02:45:28]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:373
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:376
 #, reviewed
 msgid "Aborted without saving any changes."
 msgstr "Abgebrochen, ohne Änderungen zu speichern."
 
+# [Manually edited on 2025-10-04 23:32:07]
+# [Manually edited on 2025-10-04 23:32:41]
+# [Manually edited on 2025-10-04 23:32:56]
+#  [Manually edited on 2025-10-04 23:33:33]
+#  [Manually edited on 2025-10-04 23:34:04]
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:30
+#, reviewed
+msgid "Actions to perform in the workflow"
+msgstr "Workflowschritte zum Ausführen"
+
 # [Translated with Google Translate on 2025-10-04 02:43:38]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:131
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:133
 #, unconfirmed
 msgid "Add a note... (optional)"
 msgstr "Fügen Sie eine Notiz hinzu... (optional)"
 
 # [Translated with Google Translate on 2025-10-04 02:43:38]
 # [Manually edited on 2025-10-04 03:47:15]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:89
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:143
 #, reviewed
 msgid "Additional keywords to look for in source files"
-msgstr "Zusätzliche Schlüsselwörter, nach denen Sie in Quelldateien suchen sollten"
+msgstr ""
+"Zusätzliche Schlüsselwörter, nach denen Sie in Quelldateien suchen sollten"
 
 # [Translated with Google Translate on 2025-10-04 02:43:39]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:167
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:176
 #, unconfirmed
 msgid "All translation files cleared."
 msgstr "Alle Übersetzungsdateien gelöscht."
 
 # [Translated with Google Translate on 2025-10-04 02:43:39]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/utils.py:157
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/utils.py:152
 #, python-brace-format, unconfirmed
 msgid "An error occurred: {error}"
 msgstr "Es ist ein Fehler aufgetreten: {error}"
@@ -93,7 +106,7 @@ msgid "Are you sure? This action cannot be undone."
 msgstr "Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden."
 
 # [Translated with Google Translate on 2025-10-04 02:43:40]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:24
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:69
 #, unconfirmed
 msgid "Author of the project"
 msgstr "Autor des Projekts"
@@ -102,99 +115,105 @@ msgstr "Autor des Projekts"
 # [Manually edited on 2025-10-04 03:45:18]
 #: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/confirm_inevitable.py:22
 #: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/confirm_inevitable.py:43
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:25
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:27
 #, reviewed
 msgid "Cancel"
 msgstr "Stornieren"
 
+# [Translated with Google Translate on 2025-10-04 02:43:42]
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:35
+#, fuzzy, unconfirmed
+msgid "Cancel translation task"
+msgstr "Übersetzungsdateien löschen"
+
 # [Translated with Google Translate on 2025-10-04 02:43:41]
 # [Manually edited on 2025-10-04 02:45:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:344
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/translation_service/services.py:32
 #, reviewed
 msgid "ChatGPT Translation Service"
 msgstr "ChatGPT-Übersetzungsdienst"
 
 # [Translated with Google Translate on 2025-10-04 02:43:42]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:40
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:32
 #, unconfirmed
 msgid "Clear translation files"
 msgstr "Übersetzungsdateien löschen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:42]
 # [Manually edited on 2025-10-04 02:46:12]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:307
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:320
 #, reviewed
 msgid "Compilation completed."
 msgstr "Kompilierung abgeschlossen."
 
 # [Translated with Google Translate on 2025-10-04 02:43:42]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:31
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/subcommand.py:25
 #, unconfirmed
 msgid "Compile"
 msgstr "Kompilieren"
 
 # [Translated with Google Translate on 2025-10-04 02:43:43]
 # [Manually edited on 2025-10-04 02:46:23]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:345
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/translation_service/services.py:33
 #, reviewed
 msgid "DeepL Translator"
 msgstr "DeepL Übersetzer"
 
 # [Translated with Google Translate on 2025-10-04 02:43:44]
 # [Manually edited on 2025-10-04 02:46:43]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:137
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:56
 #, reviewed
 msgid "Default translation service to use"
 msgstr "Benutzter Standardübersetzungsdienst"
 
 # [Translated with Google Translate on 2025-10-04 02:43:44]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:63
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:113
 #, unconfirmed
 msgid "Destination language code"
 msgstr "Zielsprachcode"
 
 # [Translated with Google Translate on 2025-10-04 02:43:45]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:41
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:86
 #, unconfirmed
 msgid "Directory for locale files"
 msgstr "Verzeichnis für Gebietsschemasdateien"
 
 # [Translated with Google Translate on 2025-10-04 02:43:45]
 # [Manually edited on 2025-10-04 02:46:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:68
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:122
 #, reviewed
 msgid "Domain for the .po files"
 msgstr "Domäne für die .po-Dateien"
 
 # [Translated with Google Translate on 2025-10-04 02:43:46]
 # [Manually edited on 2025-10-04 02:47:08]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:31
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:32
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:34
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:35
 #, reviewed
 msgid "Edit Selected"
 msgstr "Auswahl bearbeiten"
 
 # [Translated with Google Translate on 2025-10-04 02:43:46]
 # [Manually edited on 2025-10-04 02:47:16]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:84
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:86
 #, python-brace-format, reviewed
 msgid "Editing: \"{msgid}\" [{idx}]"
 msgstr "Bearbeitung: \"{msgid}\" [{idx}]"
 
 # [Translated with Google Translate on 2025-10-04 02:43:46]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:28
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:73
 #, unconfirmed
 msgid "Email of the author"
 msgstr "E-Mail des Autors"
 
 # [Translated with Google Translate on 2025-10-04 02:43:47]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:28
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/subcommand.py:22
 #, unconfirmed
 msgid "Extract and Update"
 msgstr "Extrahieren und aktualisieren"
 
 # [Translated with Google Translate on 2025-10-04 02:43:47]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:295
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:308
 #, unconfirmed
 msgid "Extraction and update completed."
 msgstr "Extraktion und Update abgeschlossen."
@@ -202,13 +221,13 @@ msgstr "Extraktion und Update abgeschlossen."
 # [Translated with Google Translate on 2025-10-04 02:43:48]
 # [Manually edited on 2025-10-04 02:47:28]
 # [Manually edited on 2025-10-04 02:47:30]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:97
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:99
 #, reviewed
 msgid "Filter entries (use * and ? as wildcards)."
 msgstr "Filtereinträge (verwenden * und ? als Wildcards)."
 
 # [Translated with Google Translate on 2025-10-04 02:43:48]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:33
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:36
 #, unconfirmed
 msgid "Filter rows"
 msgstr "Filterreihen"
@@ -216,45 +235,45 @@ msgstr "Filterreihen"
 # [Translated with Google Translate on 2025-10-04 02:43:49]
 # [Manually edited on 2025-10-04 02:48:53]
 # [Manually edited on 2025-10-04 02:49:51]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:158
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:168
 #, reviewed
 msgid "Fuzzy new translations:        "
 msgstr "Markiere neue Übersetzungen als unscharf:"
 
 # [Translated with Google Translate on 2025-10-04 02:43:49]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:340
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/translation_service/services.py:28
 #, unconfirmed
 msgid "Google Translate"
 msgstr "Google Translate"
 
 # [Translated with Google Translate on 2025-10-04 02:43:50]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:83
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:86
 #, unconfirmed
 msgid "HTTP Proxy"
 msgstr "HTTP-Proxy"
 
 # [Translated with Google Translate on 2025-10-04 02:43:50]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:94
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:152
 #, unconfirmed
 msgid "HTTP proxy URL"
 msgstr "HTTP-Proxy-URL"
 
 # [Translated with Google Translate on 2025-10-04 02:43:50]
 # [Manually edited on 2025-10-04 02:49:08]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:92
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:95
 #, reviewed
 msgid "HTTPS Proxy"
 msgstr "HTTPS-Proxy"
 
 # [Translated with Google Translate on 2025-10-04 02:43:51]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:99
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:157
 #, unconfirmed
 msgid "HTTPS proxy URL"
 msgstr "HTTPS-Proxy-URL"
 
 # [Translated with Google Translate on 2025-10-04 02:43:51]
 # [Manually edited on 2025-10-04 02:49:17]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:81
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:135
 #, reviewed
 msgid "Line width for .po files"
 msgstr "Zeilenbreite für .po-Dateien"
@@ -262,74 +281,77 @@ msgstr "Zeilenbreite für .po-Dateien"
 # [Translated with Google Translate on 2025-10-04 02:43:52]
 # [Manually edited on 2025-10-04 02:49:27]
 # [Manually edited on 2025-10-04 02:49:42]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:129
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:48
 #, reviewed
 msgid "Mark new translations as fuzzy"
 msgstr "Markiere neue Übersetzungen als unscharf"
 
 # [Translated with Google Translate on 2025-10-04 02:43:52]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:342
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/translation_service/services.py:30
 #, unconfirmed
 msgid "Microsoft Translator"
 msgstr "Microsoft-Übersetzer"
 
 # [Translated with Google Translate on 2025-10-04 02:43:52]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:104
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:107
 #, unconfirmed
 msgid "Model"
 msgstr "Modell"
 
 # [Translated with Google Translate on 2025-10-04 02:43:52]
 # [Manually edited on 2025-10-04 02:50:05]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:119
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:177
 #, reviewed
 msgid "Model to use for the translation service, if applicable"
-msgstr "Modell, das für den Übersetzungsdienst verwendet werden, falls zutreffend"
+msgstr ""
+"Modell, das für den Übersetzungsdienst verwendet werden, falls zutreffend"
 
 # [Translated with Google Translate on 2025-10-04 02:43:52]
 # [Manually edited on 2025-10-04 02:50:11]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:479
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/table_row.py:34
 #, reviewed
 msgid "MsgId"
 msgstr "MsgId"
 
 # [Translated with Google Translate on 2025-10-04 02:43:52]
 # [Manually edited on 2025-10-04 02:50:16]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:480
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/table_row.py:35
 #, reviewed
 msgid "MsgStr"
 msgstr "MsgStr"
 
 # [Translated with Google Translate on 2025-10-04 02:43:53]
 # [Manually edited on 2025-10-04 02:50:26]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:135
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:138
 #, reviewed
 msgid "Must be 'free' or 'paid'"
 msgstr "Muss \"free\" oder \"paid\" sein"
 
 # [Translated with Google Translate on 2025-10-04 02:43:53]
 # [Manually edited on 2025-10-04 02:50:36]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:341
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/translation_service/services.py:29
 #, reviewed
 msgid "MyMemory Translator"
 msgstr "MyMemory-Übersetzer"
 
 # [Translated with Google Translate on 2025-10-04 02:43:53]
 # [Manually edited on 2025-10-04 02:51:06]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:183
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:192
 #, reviewed
 msgid "No actions selected to run."
 msgstr "Keine Aktionen ausgewählt zum Ausführen."
 
 # [Translated with Google Translate on 2025-10-04 02:43:53]
 # [Manually edited on 2025-10-04 02:51:09]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:330
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:333
 #, reviewed
 msgid "No entry found for the selected cell. Restart the application."
-msgstr "Kein Eintrag für die ausgewählte Zelle gefunden. Starten Sie die Anwendung neu."
+msgstr ""
+"Kein Eintrag für die ausgewählte Zelle gefunden. Starten Sie die Anwendung "
+"neu."
 
 # [Translated with Google Translate on 2025-10-04 02:43:53]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:482
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/table_row.py:37
 #, unconfirmed
 msgid "Note"
 msgstr "Notiz"
@@ -343,287 +365,315 @@ msgstr "OK"
 
 # [Translated with Google Translate on 2025-10-04 02:43:54]
 # [Manually edited on 2025-10-04 02:51:24]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:150
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:40
+#, fuzzy, reviewed
+msgid "Override existing translations"
+msgstr "Überschreibe vorhandene Übersetzungen:"
+
+# [Translated with Google Translate on 2025-10-04 02:43:54]
+# [Manually edited on 2025-10-04 02:51:24]
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:153
 #, reviewed
 msgid "Override existing translations:"
 msgstr "Überschreibe vorhandene Übersetzungen:"
 
 # [Translated with Google Translate on 2025-10-04 02:43:54]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:347
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:350
 #, python-brace-format, unconfirmed
 msgid "PO file saved to \"{path}\"."
 msgstr "PO-Datei in \"{path}\" gespeichert."
 
 # [Translated with Google Translate on 2025-10-04 02:43:54]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:73
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:127
 #, unconfirmed
-msgid "Path to the Babel mapping file (as CLI argument) or its content (in pyproject.toml config)"
-msgstr "Pfad zur Babel-Mapping-Datei (als CLI-Argument) oder dessen Inhalt (in pyproject.toml config)"
+msgid ""
+"Path to the Babel mapping file (as CLI argument) or its content (in "
+"pyproject.toml config)"
+msgstr ""
+"Pfad zur Babel-Mapping-Datei (als CLI-Argument) oder dessen Inhalt (in "
+"pyproject.toml config)"
 
 # [Translated with Google Translate on 2025-10-04 02:43:54]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:51
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:100
 #, unconfirmed
 msgid "Paths to exclude from searching"
 msgstr "Pfade, die von der Suche ausgeschlossen werden müssen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:54]
 # [Manually edited on 2025-10-04 02:51:39]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:46
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:91
 #, reviewed
 msgid "Paths to search for source files"
 msgstr "Pfade zur Suche nach Quelldateien"
 
 # [Translated with Google Translate on 2025-10-04 02:43:54]
 # [Manually edited on 2025-10-04 02:51:49]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:211
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:214
 #, python-brace-format, reviewed
 msgid "Previous value was: \"{old_value}\", current value is: \"{new_value}\"."
-msgstr "Der frühere Wert war: \"{old_value}\", der aktuelle Wert lautet: \"{new_value}\"."
+msgstr ""
+"Der frühere Wert war: \"{old_value}\", der aktuelle Wert lautet: "
+"\"{new_value}\"."
 
 # [Translated with Google Translate on 2025-10-04 02:43:55]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:39
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:38
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:31
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:32
 #, unconfirmed
 msgid "Quit"
 msgstr "Aufhören"
 
 # [Translated with Google Translate on 2025-10-04 02:43:55]
 # [Manually edited on 2025-10-04 02:51:58]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:34
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:37
 #, reviewed
 msgid "Quit and Save"
 msgstr "Aufhören und speichern"
 
 # [Translated with Google Translate on 2025-10-04 02:43:55]
 # [Manually edited on 2025-10-04 02:52:13]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:35
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:38
 #, reviewed
 msgid "Quit without Saving"
 msgstr "Aufhören und verwerfen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:55]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:112
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:115
 #, unconfirmed
 msgid "Region"
 msgstr "Region"
 
 # [Translated with Google Translate on 2025-10-04 02:43:55]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:124
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:182
 #, unconfirmed
 msgid "Region for the translation service, if applicable"
 msgstr "Region für den Übersetzungsdienst gegebenenfalls zutreffend"
 
 # [Translated with Google Translate on 2025-10-04 02:43:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:294
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:297
 #, unconfirmed
 msgid "Reset the filter to select an entry to edit."
-msgstr "Setzen Sie den Filter zurück, um einen Eintrag zum Bearbeiten auszuwählen."
+msgstr ""
+"Setzen Sie den Filter zurück, um einen Eintrag zum Bearbeiten auszuwählen."
 
 # [Translated with Google Translate on 2025-10-04 02:43:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:30
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/subcommand.py:24
 #, unconfirmed
 msgid "Review"
 msgstr "Rezension"
 
 # [Translated with Google Translate on 2025-10-04 02:43:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:38
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:30
 #, unconfirmed
 msgid "Run Workflow"
 msgstr "Workflow ausführen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:30
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:33
 #, unconfirmed
 msgid "Save"
 msgstr "Speichern"
 
 # [Translated with Google Translate on 2025-10-04 02:43:56]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:178
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:190
 #, unconfirmed
 msgid "Select Translation Service"
 msgstr "Wählen Sie den Übersetzungsdienst"
 
 # [Translated with Google Translate on 2025-10-04 02:43:57]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:59
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:109
 #, unconfirmed
 msgid "Source language code"
 msgstr "Quellsprachcode"
 
 # [Translated with Google Translate on 2025-10-04 02:43:57]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:24
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_edit_sc.py:26
 #, unconfirmed
 msgid "Submit"
 msgstr "Einreichen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:57]
 # [Manually edited on 2025-10-04 02:52:39]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:262
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:265
 #, python-brace-format, reviewed
 msgid "Table column \"{column}\" filtered with \"{pattern}\"."
 msgstr "Tabellenspalte \"{column}\" mit \"{pattern}\" gefiltert."
 
 # [Translated with Google Translate on 2025-10-04 02:43:57]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:481
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/table_row.py:36
 #, unconfirmed
 msgid "Tag"
 msgstr "Etikett"
 
 # [Translated with Google Translate on 2025-10-04 02:43:57]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:36
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:81
 #, unconfirmed
 msgid "Title of the project"
 msgstr "Titel des Projekts"
 
 # [Translated with Google Translate on 2025-10-04 02:43:57]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:40
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:34
 #, unconfirmed
 msgid "Toggle Fuzzy New Translations"
 msgstr "Fuzzy neue Übersetzungen umschalten"
 
 # [Translated with Google Translate on 2025-10-04 02:43:58]
 # [Manually edited on 2025-10-04 02:53:43]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:39
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:33
 #, reviewed
 msgid "Toggle Override Existing"
 msgstr "Aktiviere/Deaktiviere Überschreiben von Übersetzungen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:58]
 # [Manually edited on 2025-10-04 02:53:47]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:29
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:37
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:31
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/subcommand.py:23
 #, reviewed
 msgid "Translate"
 msgstr "Übersetzen"
 
 # [Translated with Google Translate on 2025-10-04 02:43:58]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:331
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:383
 #, unconfirmed
-msgid "Translating PO file... This may take a while depending on the file size."
-msgstr "Übersetzen der PO-Datei... Dies kann eine Weile dauern, abhängig von der Dateigröße."
+msgid ""
+"Translating PO file... This may take a while depending on the file size."
+msgstr ""
+"Übersetzen der PO-Datei... Dies kann eine Weile dauern, abhängig von der "
+"Dateigröße."
 
 # [Translated with Google Translate on 2025-10-04 02:43:58]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:89
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:82
 #, unconfirmed
 msgid "Translation Workflow"
 msgstr "Übersetzungsworkflow"
 
 # [Translated with Google Translate on 2025-10-04 02:43:58]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:418
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:470
 #, unconfirmed
 msgid "Translation completed and PO file saved."
 msgstr "Übersetzung abgeschlossen und PO-Datei gespeichert."
 
 # [Translated with Google Translate on 2025-10-04 02:43:58]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:209
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:333
+#, fuzzy, unconfirmed
+msgid "Translation process cancelled."
+msgstr "Übersetzung aktualisiert."
+
+# [Translated with Google Translate on 2025-10-04 02:43:58]
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:212
 #, unconfirmed
 msgid "Translation updated."
 msgstr "Übersetzung aktualisiert."
 
 # [Translated with Google Translate on 2025-10-04 02:43:59]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:478
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/table_row.py:33
 #, unconfirmed
 msgid "Type"
 msgstr "Typ"
 
 # [Translated with Google Translate on 2025-10-04 02:43:59]
 # [Manually edited on 2025-10-04 02:54:04]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:109
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:167
 #, reviewed
 msgid "Type of API key, if applicable (either \"free\" or \"paid\")"
 msgstr "Art der API-Schlüssel, falls zutreffend (entweder \"free\" oder \"paid\")"
 
 # [Translated with Google Translate on 2025-10-04 02:43:59]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:32
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:77
 #, unconfirmed
 msgid "Version of the project"
 msgstr "Version des Projekts"
 
 # [Translated with Google Translate on 2025-10-04 02:43:59]
 # [Manually edited on 2025-10-04 02:54:13]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:343
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/translation_service/services.py:31
 #, reviewed
 msgid "Yandex Translate"
 msgstr "Yandex Übersetzer"
 
 # [Translated with Google Translate on 2025-10-04 02:43:59]
 # [Manually edited on 2025-10-04 02:54:20]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:370
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/po_file/tag.py:16
 #, reviewed
 msgid "fuzzy"
 msgstr "unscharf"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:372
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/po_file/tag.py:18
 #, unconfirmed
 msgid "reviewed"
 msgstr "überprüft"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
 # [Manually edited on 2025-10-04 02:54:32]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:171
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/config.py:218
 #, python-brace-format, reviewed
 msgid "unbabelizer {version} configuration"
 msgstr "Unbabelizer {version} Konfiguration"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:371
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/po_file/tag.py:17
 #, unconfirmed
 msgid "unconfirmed"
 msgstr "unbestätigt"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types.py:369
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/types/po_file/tag.py:15
 #, unconfirmed
 msgid "unknown"
 msgstr "unbekannt"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:418
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:470
 #, unconfirmed
 msgid "⌛ Translation Completed"
 msgstr "⌛ Übersetzung abgeschlossen"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:333
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:385
 #, unconfirmed
 msgid "⏳ Translation Started"
 msgstr "⏳ Übersetzung begann"
 
 # [Translated with Google Translate on 2025-10-04 02:44:00]
 # [Manually edited on 2025-10-04 02:54:45]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:375
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:378
 #, reviewed
 msgid "⚠️  Aborted"
 msgstr "⚠️  Abgebrochen"
 
 # [Translated with Google Translate on 2025-10-04 02:44:01]
 # [Manually edited on 2025-10-04 02:54:49]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:183
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:192
 #, reviewed
 msgid "⚠️ Warning"
 msgstr "⚠️  Warnung"
 
 # [Translated with Google Translate on 2025-10-04 02:44:01]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/utils.py:158
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/utils.py:153
 #, unconfirmed
 msgid "⛔ Unexpected Error"
 msgstr "⛔ Unerwarteter Fehler"
 
 # [Translated with Google Translate on 2025-10-04 02:44:01]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:167
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:295
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:307
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:215
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:264
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:349
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:176
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:308
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/app.py:320
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:218
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:267
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:352
 #, unconfirmed
 msgid "✅ Success"
 msgstr "✅ Erfolg"
 
 # [Translated with Google Translate on 2025-10-04 02:44:01]
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:296
-#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:332
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:299
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_review_sc.py:335
 #, unconfirmed
 msgid "❌ Error"
 msgstr "❌ Fehler"
 
+# [Translated with Google Translate on 2025-10-04 02:44:00]
+#: /home/dawid/github/sarumaj/unbabelizer/src/unbabelizer/modals/po_translation_sc.py:335
+#, fuzzy, unconfirmed
+msgid "❌ Translation Cancelled"
+msgstr "⌛ Übersetzung abgeschlossen"

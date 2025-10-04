@@ -34,7 +34,7 @@ class Logger(logging.LoggerAdapter[Any]):
         for handler in handlers:
             if isinstance(handler, logging.handlers.RotatingFileHandler):
                 return Path(handler.baseFilename)
-        return Path()
+        return None
 
     def process(self, msg: str, kwargs: Any):
         if "extra" in kwargs:
