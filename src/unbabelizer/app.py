@@ -1,22 +1,27 @@
 import asyncio
 from enum import Enum
-from gettext import gettext as _
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any, Tuple, overload
 
 from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import ScrollableContainer
-from textual.widgets import Footer, Header, ProgressBar, Select, SelectionList, Static
+from textual.widgets import Footer, Header, ProgressBar, SelectionList, Static, TabbedContent, TabPane
 
 from .config import Config
 from .log import Logger
 from .modals.confirm_inevitable import ConfirmInevitable
 from .modals.po_review_sc import POReviewScreen
 from .modals.po_translation_sc import Translator
+from .translation import get_display_name_for_lang_code
 from .types import SubCommand
-from .utils import NotifyException, apply_styles, run_babel_cmd, wait_for_element
+from .utils import apply_styles, handle_exception, run_babel_cmd, wait_for_element
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
 
 
 class AppSubCommand(Enum):
@@ -42,11 +47,13 @@ class UnbabelizerApp(App[None]):
             config (Config): The configuration for the application.
         """
         super().__init__()
+        self.get_theme_variable_defaults()
         self._app_logger = logger or Logger()
         self._config = config
         self._config.locale_dir.mkdir(parents=True, exist_ok=True)
         self._lock = asyncio.Lock()
         self._current_lang_idx = 0
+        self._workflow_running = False
         self.logger.debug(
             "unbabelizerApp initialized with config:", extra={"config": self._config, "context": "unbabelizerApp.init"}
         )
@@ -74,55 +81,67 @@ class UnbabelizerApp(App[None]):
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the main application."""
         yield Header()
-        yield apply_styles(
-            ScrollableContainer(
-                Static(_("Target language")),
-                Select(
-                    [(l, l) for l in self._config.dest_lang],
-                    prompt=_("Select target language"),
-                    value=self._config.dest_lang[self._current_lang_idx],
-                ),
-                Static(_("Translation Workflow")),
-                SelectionList(
-                    AppSubCommand.EXTRACT_UPDATE.value.selection_list_item,
-                    AppSubCommand.TRANSLATE.value.selection_list_item,
-                    AppSubCommand.REVIEW.value.selection_list_item,
-                    AppSubCommand.COMPILE.value.selection_list_item,
-                ),
-                apply_styles(
-                    ProgressBar(total=100, show_eta=True, show_percentage=True),
-                    vertical="bottom",
-                    width="1fr",
-                    height="1fr",
-                ),
-            ),
-            vertical="top",
-            width="1fr",
-            height="1fr",
-        )
+        with TabbedContent(initial=""):
+            for lang in self._config.dest_lang:
+                with TabPane(get_display_name_for_lang_code(lang), name=lang):
+                    yield apply_styles(
+                        ScrollableContainer(
+                            Static(_("Translation Workflow")),
+                            SelectionList(
+                                AppSubCommand.EXTRACT_UPDATE.value.selection_list_item,
+                                AppSubCommand.TRANSLATE.value.selection_list_item,
+                                AppSubCommand.REVIEW.value.selection_list_item,
+                                AppSubCommand.COMPILE.value.selection_list_item,
+                                id=f"workflow_selection_list_{lang}",
+                            ),
+                            apply_styles(
+                                ProgressBar(total=100, show_eta=True, show_percentage=True, id=f"progress_bar_{lang}"),
+                                vertical="bottom",
+                                width="1fr",
+                                height="1fr",
+                            ),
+                        ),
+                        vertical="top",
+                        width="1fr",
+                        height="1fr",
+                    )
         yield Footer()
 
     async def on_mount(self):
         """Handle the mount event for the application."""
-        (await wait_for_element(self.query_one, selector=SelectionList)).focus()
+        (
+            await wait_for_element(
+                self.query_one,
+                selector=f"#workflow_selection_list_{self._config.dest_lang[self._current_lang_idx]}",
+                expect_type=SelectionList,
+            )
+        ).focus()
 
-    async def on_select_changed(self, message: Select.Changed):
-        """Handle changes to the target language selection."""
-        if message.value not in self._config.dest_lang:
+    async def on_tabbed_content_tab_activated(self, message: TabbedContent.TabActivated):
+        """Handle tab activation events to switch target languages."""
+        if (
+            not message.tabbed_content.active_pane
+            or message.tabbed_content.active_pane.name not in self._config.dest_lang
+        ):
             self.logger.warning(
-                "Selected language not in configured destination languages",
-                extra={"selected_language": message.value, "context": "unbabelizerApp.on_select_changed"},
+                "Activated tab not in configured destination languages",
+                extra={"activated_tab": message.tab.id, "context": "unbabelizerApp.on_tabbed_content_tab_activated"},
             )
             return
 
-        self._current_lang_idx = self._config.dest_lang.index(f"{message.value}")
+        self._current_lang_idx = self._config.dest_lang.index(f"{message.tabbed_content.active_pane.name}")
         self.logger.info(
             "Target language changed",
             extra={
                 "new_language": self._config.dest_lang[self._current_lang_idx],
-                "context": "unbabelizerApp.on_select_changed",
+                "context": "unbabelizerApp.on_tabbed_content_tab_activated",
             },
         )
+
+    def check_action(self, action: str, parameters: Tuple[object, ...]) -> bool | None:
+        """Check if an action can be performed."""
+        _ = (action, parameters)  # Unused
+        return not self._workflow_running
 
     async def action_clear(self):
         """Clear all .po and .mo files in the locale directory."""
@@ -132,7 +151,7 @@ class UnbabelizerApp(App[None]):
                 return
 
             self.logger.info("Clearing translation files...", extra={"context": "unbabelizerApp.clear"})
-            with NotifyException(self, self.logger):
+            with handle_exception(self, self.logger):
                 for path in self._config.locale_dir.rglob("*"):
                     if path.is_file():
                         self.logger.debug("Removing file", extra={"path": path, "context": "unbabelizerApp.clear"})
@@ -153,12 +172,26 @@ class UnbabelizerApp(App[None]):
     async def action_run_workflow(self):
         """Run the selected workflow actions."""
         self.logger.info("Running workflow actions...", extra={"context": "unbabelizerApp.run_workflow"})
-        selection_list = await wait_for_element(self.query_one, selector=SelectionList)
+        selection_list = await wait_for_element(
+            self.query_one,
+            selector=f"#workflow_selection_list_{self._config.dest_lang[self._current_lang_idx]}",
+            expect_type=SelectionList,
+        )
         selections = [f"{option}" for option in selection_list.selected]
+        if not selections:
+            self.logger.warning("No actions selected to run", extra={"context": "unbabelizerApp.run_workflow"})
+            self.notify(_("No actions selected to run."), timeout=3, title=_("⚠️ Warning"))
+            return
+
+        self._workflow_running = True
         self.logger.debug(
             "Selected actions:", extra={"selections": selections, "context": "unbabelizerApp.run_workflow"}
         )
-        progress_bar = await wait_for_element(self.query_one, selector=ProgressBar)
+        progress_bar = await wait_for_element(
+            self.query_one,
+            selector=f"#progress_bar_{self._config.dest_lang[self._current_lang_idx]}",
+            expect_type=ProgressBar,
+        )
         progress_bar.update(total=100, progress=0)
         actions = {
             AppSubCommand.EXTRACT_UPDATE.value.name: self.flow_extract_and_update,
@@ -173,6 +206,7 @@ class UnbabelizerApp(App[None]):
                 progress_bar.advance(100 // (len(selections) or 1))
 
         progress_bar.update(total=100, progress=100)
+        self._workflow_running = False
 
     async def action_quit(self):
         """Quit the application."""
@@ -187,7 +221,7 @@ class UnbabelizerApp(App[None]):
         )
 
         async with self._lock:
-            with NotifyException(self, self.logger):
+            with handle_exception(self, self.logger):
                 # Extraction (overwrite existing .pot file)
                 mapping_file = self._config.locale_dir / "babel_mapping.txt"
                 self.logger.debug(
@@ -269,7 +303,7 @@ class UnbabelizerApp(App[None]):
         """Compile .po files into .mo files."""
         self.logger.info("Compiling translations...", extra={"context": "unbabelizerApp.flow_compile_translations"})
         async with self._lock:
-            with NotifyException(self, self.logger):
+            with handle_exception(self, self.logger):
                 run_babel_cmd(["compile"] + ["-D", self._config.domain] + ["-d", str(self._config.locale_dir)])
                 self.logger.info(
                     "Compilation completed.", extra={"context": "unbabelizerApp.flow_compile_translations"}

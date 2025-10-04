@@ -1,18 +1,14 @@
-import gettext
 import sys
 import traceback
-from gettext import gettext as _
-from pathlib import Path
 
 from pydantic import ValidationError
 
+from .translation import setup_translation
+
+setup_translation()
+
 from .app import UnbabelizerApp
 from .config import Config, logger
-
-gettext.bindtextdomain(
-    "messages",
-    (Path(__file__).parent / "locales").resolve(),
-)
 
 
 def main(args: list[str] | None = None):

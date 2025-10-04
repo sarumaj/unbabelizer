@@ -1,23 +1,27 @@
-from datetime import datetime
-from gettext import gettext as _
+from typing import TYPE_CHECKING, Dict, overload
 
 import polib
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.events import Key
 from textual.screen import ModalScreen
-from textual.widgets import Footer, Input, Static
+from textual.widgets import Footer, Input
 
 from ..log import Logger
-from ..types import POFileEntryTag
-from ..utils import apply_styles, escape_control_chars, unescape_control_chars, wait_for_element
+from ..types import FnmatchHighlighter, FStringHighlighter, Note, POFileEntryTag
+from ..utils import apply_styles, escape_control_chars, unescape_control_chars, wait_for_element, write_new_tcomment
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
 
 
-class POEditScreen(ModalScreen[str]):
+class POEditScreen(ModalScreen[Dict[str, str] | str]):
     """A modal screen for editing or filtering PO file entries."""
 
     BINDINGS = [
-        Binding(key="enter", action="submit", description=_("Submit"), show=True),
+        Binding(key="enter", action="submit", description=_("Submit"), show=True, priority=True),
         Binding(key="escape", action="cancel", description=_("Cancel"), show=True),
     ]
 
@@ -74,42 +78,65 @@ class POEditScreen(ModalScreen[str]):
 
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the modal."""
-        value = (  # pyright: ignore[reportUnknownVariableType]
-            (
-                self.entry.msgstr  # pyright: ignore[reportUnknownMemberType]
-                if self.idx is None
-                else self.entry.msgstr_plural[self.idx]  # pyright: ignore[reportUnknownMemberType]
-            )
-            if self.entry is not None
-            else "*"
-        )
         yield apply_styles(
             (
-                Static(
-                    _('Editing: "{msgid}" [{idx}]').format(
+                Input(
+                    value=_('Editing: "{msgid}" [{idx}]').format(
                         msgid=escape_control_chars(
                             self.entry.msgid  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
                             if self.idx is None
                             else self.entry.msgid_plural  # pyright: ignore[reportUnknownMemberType]
                         ),
                         idx=self.idx if self.idx is not None else "Singular",
-                    )
-                    + "\n",
+                    ),
+                    disabled=True,
+                    highlighter=FStringHighlighter(),
                 )
                 if self.entry is not None
-                else Static(_("Filter entries (use * and ? as wildcards).") + "\n")
+                else Input(
+                    value=_("Filter entries (use * and ? as wildcards)."),
+                    disabled=True,
+                    highlighter=FnmatchHighlighter(),
+                )
             ),
             width="1fr",
             vertical="top",
         )
         yield apply_styles(
             Input(
+                id="poedit-input",
                 valid_empty=True,
-                value=escape_control_chars(value),  # pyright: ignore[reportUnknownArgumentType]
+                value=escape_control_chars(  # pyright: ignore[reportUnknownArgumentType]
+                    (
+                        self.entry.msgstr  # pyright: ignore[reportUnknownMemberType]
+                        if self.idx is None
+                        else self.entry.msgstr_plural[self.idx]  # pyright: ignore[reportUnknownMemberType]
+                    )
+                    if self.entry is not None
+                    else "*"
+                ),
+                highlighter=FStringHighlighter() if self.entry is not None else FnmatchHighlighter(),
             ),
             width="1fr",
             vertical="top",
         )
+        if self.entry is not None:
+            comment_input = apply_styles(
+                Input(
+                    id="poedit-comment",
+                    valid_empty=True,
+                    value=escape_control_chars(  # pyright: ignore[reportUnknownArgumentType]
+                        Note.parse_entry(self.entry)
+                    ),
+                    placeholder=_("Add a note... (optional)"),
+                ),
+                width="1fr",
+                vertical="top",
+            )
+            # Style the comment input differently to distinguish it from the main input
+            comment_input.styles.text_style = "italic"
+            comment_input.styles.opacity = 0.85
+            yield comment_input
         yield Footer()
 
     async def key_enter(self, event: Key):
@@ -125,7 +152,7 @@ class POEditScreen(ModalScreen[str]):
     async def filter_cells(self):
         """Filter the entries based on the input value."""
         self.logger.debug("Filtering entries", extra={"context": "POEditScreen.filter_cells"})
-        new_val = (await wait_for_element(lambda: self.query_one(Input))).value.strip()
+        new_val = (await wait_for_element(lambda: self.query_one("#poedit-input", Input))).value.strip()
         self.dismiss(new_val)
         self.logger.info(
             "Filter applied and modal dismissed",
@@ -139,24 +166,19 @@ class POEditScreen(ModalScreen[str]):
             self.logger.warning("No entry to update", extra={"context": "POEditScreen.update_cell"})
             return
 
-        new_val = (await wait_for_element(lambda: self.query_one(Input))).value.strip()
+        new_val = (await wait_for_element(lambda: self.query_one("#poedit-input", Input))).value.strip()
         orig_val = unescape_control_chars(new_val)
         if self.idx is None:
             self.entry.msgstr = orig_val
         else:
             self.entry.msgstr_plural[self.idx] = orig_val  # pyright: ignore[reportUnknownMemberType]
 
+        comment_val = (await wait_for_element(lambda: self.query_one("#poedit-comment", Input))).value.strip()
+        Note(unescape_control_chars(comment_val)).update_entry(self.entry)
         POFileEntryTag.REVIEWED.apply(self.entry)
-        self.entry.tcomment = "\n".join(
-            (
-                (self.entry.tcomment or ""),
-                " [Manually edited on {timestamp}]".format(
-                    timestamp=datetime.now().isoformat(sep=" ", timespec="seconds"),
-                ),
-            )
-        )
+        write_new_tcomment(self.entry, " [Manually edited on {timestamp}]")
 
-        self.dismiss(new_val)
+        self.dismiss({"msgstr": new_val, "tag": POFileEntryTag.REVIEWED.value, "note": comment_val})
         self.logger.info(
             "Entry updated and modal dismissed",
             extra={

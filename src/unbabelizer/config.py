@@ -1,7 +1,7 @@
 import argparse
+import gettext
 import sys
 import tomllib
-from gettext import gettext as _
 from importlib.metadata import version as pkg_version
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
@@ -10,9 +10,10 @@ import jmespath
 from pydantic import BaseModel, Field
 
 from .log import Logger
-from .types import TranslationServiceConfig
+from .types import TranslationServiceConfig, TranslationServices
 from .utils import get_base_type
 
+_ = gettext.gettext
 logger = Logger()
 
 
@@ -123,6 +124,23 @@ class Config(BaseModel):
         description=_("Region for the translation service, if applicable"),
         json_schema_extra={"pyproject.toml": "tool.unbabelizer.region", "argparse.flag": "--region"},
     )
+    fuzzy_new_translations: bool = Field(
+        default=False,
+        description=_("Mark new translations as fuzzy"),
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.fuzzy_new_translations",
+            "argparse.flag": "--fuzzy-new-translations",
+        },
+    )
+    default_translation_service: str = Field(
+        default=TranslationServices.GOOGLE_TRANSLATE.value,
+        description=_("Default translation service to use"),
+        json_schema_extra={
+            "pyproject.toml": "tool.unbabelizer.default_translation_service",
+            "argparse.flag": "--default-translation-service",
+            "argparse.choices": [s.value for s in TranslationServices],
+        },
+    )
 
     def get_translation_config(self, dest_lang_index: int) -> TranslationServiceConfig:
         """Prepare the configuration dictionary for the translation service."""
@@ -142,6 +160,8 @@ class Config(BaseModel):
             or None,
             "model": self.model,
             "region": self.region,
+            "fuzzy_new_translations": self.fuzzy_new_translations,
+            "default_translation_service": self.default_translation_service,
         }
 
     @classmethod

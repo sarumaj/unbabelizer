@@ -1,7 +1,7 @@
+import re
 from enum import Enum
-from gettext import gettext as _
 from pathlib import Path
-from typing import NamedTuple, Protocol, Tuple, Type, TypedDict
+from typing import TYPE_CHECKING, List, NamedTuple, Protocol, Tuple, Type, TypedDict, overload
 
 import polib
 from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
@@ -12,8 +12,122 @@ from deep_translator import (  # pyright: ignore[reportMissingTypeStubs]
     MyMemoryTranslator,
     YandexTranslator,
 )
+from rich.highlighter import Highlighter
+from rich.style import Style
+from rich.text import Text
+from rich.theme import Theme
+from textual.widgets import DataTable
 
 from .utils import handle_unsupported_language
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
+
+
+class Note(str):
+    note_pattern: str = r'<note class="unbabelizer">(.+?)</note>'
+    fstring_template = '<note class="unbabelizer">{note}</note>'
+
+    @classmethod
+    def parse_entry(cls, entry: polib.POEntry) -> "Note":
+        """Extract note from the PO entry's translator comments.
+
+        Args:
+            entry (polib.POEntry): The PO entry to extract the note from.
+
+        Returns:
+            Note: The extracted note, or an empty note if none found.
+        """
+        if entry.comment:
+            match = re.search(cls.note_pattern, entry.comment, re.DOTALL | re.MULTILINE)
+            if match:
+                return cls(match.group(1).strip())
+
+        return cls("")
+
+    def update_entry(self, entry: polib.POEntry):
+        """Update the PO entry's translator comments with the current note.
+
+        Args:
+            entry (polib.POEntry): The PO entry to update.
+        """
+        if self:
+            entry.comment = re.sub(self.note_pattern, "", entry.comment).strip()
+            entry.comment = ("\n" if entry.comment else "") + self.fstring_template.format(note=self)
+
+
+class RegexHighlighter(Highlighter):
+    """A custom highlighter that does nothing."""
+
+    highlights: List[str]
+    base_style: str = ""
+    theme: Theme = Theme({})
+    default_style: Style = Style(bold=True, color="magenta")
+
+    def __init__(self):
+        """Initialize the RegexHighlighter."""
+        super().__init__()
+        self.theme.styles.update(
+            {
+                style_name: self.theme.styles.get(style_name, self.default_style)
+                for pattern in self.highlights
+                for group_name in re.compile(pattern).groupindex
+                for style_name in (f"{self.base_style.rstrip('.')}.{group_name}" if self.base_style else group_name,)
+            }
+        )
+
+    def highlight(self, text: Text):
+        """Return the text unchanged.
+
+        Args:
+            text (Text): The text to highlight.
+        """
+        theme_styles = self.theme.styles if self.theme else {}
+        for highlight in self.highlights:
+            pattern = re.compile(highlight)
+            style_name = next(iter(pattern.groupindex), None)
+            if style_name is None:
+                continue
+
+            style_name = f"{self.base_style.rstrip(".")}.{style_name}" if self.base_style else style_name
+            for match in pattern.finditer(text.plain):
+                text.stylize(theme_styles.get(style_name, self.default_style), match.start(), match.end())
+
+
+class FStringHighlighter(RegexHighlighter):
+    """A highlighter for f-strings in Python."""
+
+    highlights = [
+        r"(?P<expression>\{[^\{\}]+\})",  # Highlight expressions within {}
+        r"(?P<escape>\\{1,2}.)",  # Highlight escape sequences
+    ]
+    base_style = "fstring."
+    theme = Theme(
+        {
+            "fstring.expression": Style(bold=True, color="bright_blue"),
+            "fstring.escape": Style(bold=True, color="magenta"),
+        }
+    )
+
+
+class FnmatchHighlighter(RegexHighlighter):
+    """A highlighter for fnmatch patterns."""
+
+    highlights = [
+        r"(?P<wildcard>\*)",  # Highlight wildcard *
+        r"(?P<single_char>\?)",  # Highlight single character ?
+        r"(?P<char_class>\[[^\]]+\])",  # Highlight character classes []
+    ]
+    base_style = "fnmatch."
+    theme = Theme(
+        {
+            "fnmatch.wildcard": Style(bold=True, color="bright_green"),
+            "fnmatch.single_char": Style(bold=True, color="bright_green"),
+            "fnmatch.char_class": Style(bold=True, color="cyan"),
+        }
+    )
 
 
 class TranslationServiceConfig(TypedDict):
@@ -24,6 +138,8 @@ class TranslationServiceConfig(TypedDict):
     proxies: dict[str, str] | None
     model: str | None
     region: str | None
+    fuzzy_new_translations: bool | None
+    default_translation_service: str | None
 
 
 class DeeplTranslationService(DeeplTranslator):
@@ -252,6 +368,7 @@ class POFileEntryTag(str, Enum):
 
     UNKNOWN = _("unknown")  # Default tag when no known tag is found
     FUZZY = _("fuzzy")  # Indicates that the entry is fuzzy (translation may be inaccurate)
+    UNCONFIRMED = _("unconfirmed")  # Optional replacement for "fuzzy" to indicate unconfirmed translation
     REVIEWED = _("reviewed")  # Indicates that the entry has been reviewed
 
     def apply(self, entry: polib.POEntry):
@@ -336,11 +453,42 @@ class SubCommand(NamedTuple):
         return (self.description, self.name, self.default_check)
 
 
-class TableCell(NamedTuple):
+class TableRow(NamedTuple):
     """A cell in the PO review table."""
 
-    row_no: str
+    row_no: int
     type: str
     msgid: str
     msgstr: str
     tag: str
+    note: str
+
+    @property
+    def actual_row(self) -> Tuple[str, ...]:
+        """Return the actual row data without the row number."""
+        return self[1:]
+
+    @classmethod
+    def define_columns(cls, table: DataTable[str]):
+        """Add columns to the given DataTable for displaying TableCell data.
+
+        Args:
+            table (DataTable[str]): The DataTable to add columns to.
+        """
+        table.add_column(_("Type"), key="type")
+        table.add_column(_("MsgId"), key="msgid")
+        table.add_column(_("MsgStr"), key="msgstr")
+        table.add_column(_("Tag"), key="tag")
+        table.add_column(_("Note"), key="note")
+
+    def add_to_table(self, table: DataTable[str]):
+        """Add this TableRow to the given DataTable.
+
+        Args:
+            table (DataTable[str]): The DataTable to add the row to.
+        """
+        table.add_row(
+            *self.actual_row,
+            key=f"{self.row_no:d}",
+            label=f"{self.row_no:d}",
+        )
