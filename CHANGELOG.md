@@ -1,3 +1,9 @@
+## v1.2.1 (2025-10-04)
+
+### Feat
+
+- define preset options and make translation abortable
+
 ## v1.2.0 (2025-10-04)
 
 ### Feat
