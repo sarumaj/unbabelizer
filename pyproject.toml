@@ -32,6 +32,13 @@ version = "0.0.0"
 line-length = 120
 target-version = ["py312"]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "pep621"
+update_changelog_on_bump = true
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
@@ -40,3 +47,5 @@ dest_lang = ["de", "es", "pl", "ja", "ru"]
 input_paths = ["src"]
 locale_dir = "src/unbabelizer/locales"
 src_lang = "en"
+
+
