@@ -1,21 +1,23 @@
 import asyncio
-from datetime import datetime
-from gettext import gettext as _
 from pathlib import Path
-from typing import TypedDict
+from typing import TYPE_CHECKING, Tuple, TypedDict, overload
 
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import ScrollableContainer
+from textual.containers import HorizontalGroup, ScrollableContainer
 from textual.screen import ModalScreen
 from textual.suggester import SuggestFromList
 from textual.validation import Regex
-from textual.widgets import Checkbox, Footer, Header, Input, ProgressBar, Select
-from textual.widgets import Static as Placeholder
+from textual.widgets import Footer, Header, Input, ProgressBar, Select, Switch
 
 from ..log import Logger
 from ..types import POFileEntryTag, POFileHandler, TranslationServices
-from ..utils import NotifyException, apply_styles, correct_translation, wait_for_element
+from ..utils import apply_styles, correct_translation, handle_exception, wait_for_element, write_new_tcomment
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
 
 
 class TranslationServiceConfig(TypedDict, total=False):
@@ -35,6 +37,7 @@ class Translator(ModalScreen[None], POFileHandler):
         Binding(key="t", action="translate", description=_("Translate"), show=True),
         Binding(key="q", action="quit", description=_("Quit"), show=True),
         Binding(key="o", action="toggle_override", description=_("Toggle Override Existing"), show=True),
+        Binding(key="f", action="toggle_fuzzy", description=_("Toggle Fuzzy New Translations"), show=True),
     ]
 
     def __init__(self, po_path: Path, translation_config: TranslationServiceConfig):
@@ -74,58 +77,115 @@ class Translator(ModalScreen[None], POFileHandler):
 
     def compose_proxies(self) -> ComposeResult:
         """Compose the proxy input fields."""
-        yield Input(
-            placeholder=_("HTTP Proxy"),
-            value=((self._translation_config.get("proxies", {}) or {}).get("http", "")),
-            name="proxy_http",
-            suggester=SuggestFromList(["http://"]),
-        )
-        yield Input(
-            placeholder=_("HTTPS Proxy"),
-            value=((self._translation_config.get("proxies", {}) or {}).get("https", "")),
-            name="proxy_https",
-            suggester=SuggestFromList(["https://"]),
+        yield HorizontalGroup(
+            apply_styles(
+                Input(
+                    placeholder=_("HTTP Proxy"),
+                    value=((self._translation_config.get("proxies", {}) or {}).get("http", "")),
+                    name="proxy_http",
+                    suggester=SuggestFromList(["http://"]),
+                ),
+                width="1fr",
+            ),
+            apply_styles(
+                Input(
+                    placeholder=_("HTTPS Proxy"),
+                    value=((self._translation_config.get("proxies", {}) or {}).get("https", "")),
+                    name="proxy_https",
+                    suggester=SuggestFromList(["https://"]),
+                ),
+                width="1fr",
+            ),
         )
 
     def compose_model(self) -> ComposeResult:
         """Compose the model input field if supported."""
-        yield Input(placeholder=_("Model"), value=self._translation_config.get("model") or "", name="model")
+        yield Input(
+            placeholder=_("Model"),
+            value=self._translation_config.get("model") or "",
+            name="model",
+        )
 
     def compose_region(self) -> ComposeResult:
         """Compose the region input field if supported."""
-        yield Input(placeholder=_("Region"), value=self._translation_config.get("region") or "", name="region")
+        yield Input(
+            placeholder=_("Region"),
+            value=self._translation_config.get("region") or "",
+            name="region",
+        )
 
     def compose_api_key(self) -> ComposeResult:
         """Compose the API key input field if needed."""
-        yield Input(
-            placeholder=_("API Key"), value=self._translation_config.get("api_key") or "", password=True, name="api_key"
-        )
-        yield Input(
-            placeholder=_('API Key Type ("free" or "paid")'),
-            value=self._translation_config.get("api_key_type") or "",
-            name="api_key_type",
-            suggester=SuggestFromList(["free", "paid"]),
-            validators=(Regex(r"^(free|paid)$", flags=0, failure_description=_("Must be 'free' or 'paid'")),),
-            validate_on=("submitted", "changed"),
+        yield HorizontalGroup(
+            apply_styles(
+                Input(
+                    placeholder=_("API Key"),
+                    value=self._translation_config.get("api_key") or "",
+                    password=True,
+                    name="api_key",
+                ),
+                width="2fr",
+            ),
+            apply_styles(
+                Input(
+                    placeholder=_('API Key Type ("free" or "paid")'),
+                    value=self._translation_config.get("api_key_type") or "",
+                    name="api_key_type",
+                    suggester=SuggestFromList(["free", "paid"]),
+                    validators=(Regex(r"^(free|paid)$", flags=0, failure_description=_("Must be 'free' or 'paid'")),),
+                    validate_on=("submitted", "changed"),
+                ),
+                width="1fr",
+            ),
         )
 
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the modal."""
         yield Header()
+
+        def compose_switches() -> ComposeResult:
+
+            yield HorizontalGroup(
+                apply_styles(
+                    Input(value=_("Override existing translations:"), disabled=True), width="2fr", vertical="top"
+                ),
+                apply_styles(Switch(id="override_translations", value=False), width="1fr", vertical="top"),
+            )
+
+            yield HorizontalGroup(
+                apply_styles(
+                    Input(
+                        value=_("Fuzzy new translations:        "),
+                        disabled=self._translation_config.get("fuzzy_new_translations") or True,
+                    ),
+                    width="2fr",
+                    vertical="top",
+                ),
+                apply_styles(Switch(id="fuzzy_translations", value=True), width="1fr", vertical="top"),
+            )
+
         yield apply_styles(
             ScrollableContainer(
-                apply_styles(Checkbox(label=_("Override existing translations"), value=False), width="1fr"),
+                *compose_switches(),
                 apply_styles(
                     Select(
                         ((s.value, s.value) for s in TranslationServices),
-                        value=TranslationServices.GOOGLE_TRANSLATE.value,
+                        value=TranslationServices(
+                            self._translation_config.get("default_translation_service")
+                            or TranslationServices.GOOGLE_TRANSLATE.value
+                        ).value,
                         id="translation_service",
                         prompt=_("Select Translation Service"),
                     ),
                     width="1fr",
+                    vertical="top",
                 ),
-                apply_styles(ScrollableContainer(*self.compose_proxies(), id="translator_settings"), width="1fr"),
-                apply_styles(Placeholder(), height="1fr"),
+                apply_styles(
+                    ScrollableContainer(*self.compose_proxies(), id="translator_settings"),
+                    width="1fr",
+                    vertical="top",
+                    height="10fr",
+                ),
                 apply_styles(
                     ProgressBar(
                         total=sum(
@@ -164,6 +224,11 @@ class Translator(ModalScreen[None], POFileHandler):
 
         await asyncio.sleep(0)
 
+    def check_action(self, action: str, parameters: Tuple[object, ...]) -> bool | None:
+        """Check if an action can be performed."""
+        _ = (action, parameters)  # Unused
+        return not self._translating
+
     async def on_select_changed(self, event: Select.Changed):
         """Handle changes in the translation service selection."""
         if self._translating:
@@ -197,24 +262,30 @@ class Translator(ModalScreen[None], POFileHandler):
         )
         await asyncio.sleep(0)
 
-    async def action_toggle_override(self):
-        """Toggle the override existing translations checkbox."""
+    async def toggle_checkbox(self, checkbox_id: str):
+        """Toggle a checkbox by its ID."""
         if self._translating:
             self.logger.warning(
-                "Override toggle ignored during active translation",
-                extra={"context": "Translator.action_toggle_override"},
+                f"{checkbox_id} toggle ignored during active translation",
+                extra={"context": f"Translator.action_toggle_{checkbox_id}"},
             )
             return
 
-        self.logger.debug(
-            "Toggling override existing translations", extra={"context": "Translator.action_toggle_override"}
-        )
-        checkbox = await wait_for_element(lambda: self.query_one(Checkbox))
+        self.logger.debug(f"Toggling {checkbox_id}", extra={"context": f"Translator.action_toggle_{checkbox_id}"})
+        checkbox = await wait_for_element(lambda: self.query_one(f"#{checkbox_id}", Switch))
         checkbox.value = not checkbox.value
         self.logger.info(
-            "Override existing translations set to",
-            extra={"value": checkbox.value, "context": "Translator.action_toggle_override"},
+            f"{checkbox_id} set to",
+            extra={"value": checkbox.value, "context": f"Translator.action_toggle_{checkbox_id}"},
         )
+
+    async def action_toggle_fuzzy(self):
+        """Toggle the fuzzy new translations checkbox."""
+        await self.toggle_checkbox("fuzzy_translations")
+
+    async def action_toggle_override(self):
+        """Toggle the override existing translations checkbox."""
+        await self.toggle_checkbox("override_translations")
 
     async def action_quit(self):
         """Quit the modal."""
@@ -235,7 +306,8 @@ class Translator(ModalScreen[None], POFileHandler):
 
         self._translating = True
         progressbar = await wait_for_element(lambda: self.query_one(ProgressBar))
-        override_existing = (await wait_for_element(lambda: self.query_one(Checkbox))).value
+        override_existing = (await wait_for_element(lambda: self.query_one("#override_translations", Switch))).value
+        mark_as_fuzzy = (await wait_for_element(lambda: self.query_one("#fuzzy_translations", Switch))).value
         selected_value = (await wait_for_element(self.query_one, selector=Select)).value
 
         selected_service = (
@@ -252,7 +324,7 @@ class Translator(ModalScreen[None], POFileHandler):
                 "config": self._translation_config,
             },
         )
-        with NotifyException(self, self.logger):
+        with handle_exception(self, self.logger):
             translator = selected_service.translation_service_protocol(self._translation_config)  # type: ignore[reportArgumentType]
 
             self.notify(
@@ -324,16 +396,13 @@ class Translator(ModalScreen[None], POFileHandler):
                     await asyncio.sleep(0)
 
                 if changed:
-                    entry.tcomment = "\n".join(
-                        (
-                            (entry.tcomment or ""),
-                            " [Translated with {translation_service} on {timestamp}]".format(
-                                translation_service=selected_service.value,
-                                timestamp=datetime.now().isoformat(sep=" ", timespec="seconds"),
-                            ),
-                        )
+                    write_new_tcomment(
+                        entry,
+                        " [Translated with {translation_service} on {{timestamp}}]".format(
+                            translation_service=selected_service.value,
+                        ),
                     )
-                    POFileEntryTag.FUZZY.apply(entry)
+                    (POFileEntryTag.FUZZY if mark_as_fuzzy else POFileEntryTag.UNCONFIRMED).apply(entry)
 
             self.logger.info(
                 "Translation completed, saving PO file...",

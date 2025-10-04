@@ -1,7 +1,7 @@
+from collections import Counter
 from fnmatch import fnmatch
-from gettext import gettext as _
 from pathlib import Path
-from typing import Any, Generator, List, Tuple
+from typing import TYPE_CHECKING, Any, Generator, List, Tuple, overload
 
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -9,13 +9,18 @@ from textual.containers import ScrollableContainer
 from textual.coordinate import Coordinate
 from textual.events import Key
 from textual.screen import ModalScreen
-from textual.widgets import DataTable, Footer, Header
+from textual.widgets import DataTable, Footer, Header, Label
 
 from ..log import Logger
-from ..types import POFileEntryTag, POFileHandler, TableCell
-from ..utils import NotifyException, apply_styles, escape_control_chars, wait_for_element
+from ..types import Note, POFileEntryTag, POFileHandler, TableRow
+from ..utils import apply_styles, escape_control_chars, handle_exception, wait_for_element
 from .confirm_inevitable import ConfirmInevitable
 from .po_edit_sc import POEditScreen
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
 
 
 class POReviewScreen(ModalScreen[None], POFileHandler):
@@ -52,6 +57,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
             },
         )
 
+        self._has_changes = False
         self.entries: List[Tuple[Any, ...]] = []
         for entry in self.pofile:  # pyright: ignore[reportUnknownVariableType]
             if entry.msgid_plural:  # pyright: ignore[reportUnknownMemberType]
@@ -75,7 +81,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
             "logger",
         )
 
-    def generate_cells(self) -> Generator[TableCell, None, None]:
+    def generate_cells(self) -> Generator[TableRow, None, None]:
         """Generate table cells for the PO entries.
 
         Returns:
@@ -83,30 +89,33 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         """
         for no, (entry, idx) in enumerate(self.entries):
             if idx is None:
-                yield TableCell(
-                    f"{no}",
+                yield TableRow(
+                    no,
                     "Singular",
                     escape_control_chars(entry.msgid),
                     escape_control_chars(entry.msgstr),
                     POFileEntryTag.fish(entry, POFileEntryTag.UNKNOWN).value,
+                    escape_control_chars(Note.parse_entry(entry)),
                 )
             else:
-                yield TableCell(
-                    f"{no}",
+                yield TableRow(
+                    no,
                     f"Plural[{idx}]",
                     escape_control_chars(entry.msgid if idx == 0 else entry.msgid_plural),
                     escape_control_chars(entry.msgstr_plural[idx]),
                     POFileEntryTag.fish(entry, POFileEntryTag.UNKNOWN).value,
+                    escape_control_chars(Note.parse_entry(entry)),
                 )
 
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the modal."""
         yield Header()
         table = DataTable[str](zebra_stripes=True)
-        table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"), _("Tag"))
+        TableRow.define_columns(table)
         for cell in self.generate_cells():
-            table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr, cell.tag)
+            cell.add_to_table(table)
         yield apply_styles(ScrollableContainer(table), width="1fr", height="1fr", vertical="top")
+        yield apply_styles(Label(), width="1fr", vertical="bottom")
         yield Footer()
 
     async def key_enter(self, event: Key):
@@ -119,6 +128,39 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         )
         await self.run_action("edit")
 
+    async def on_data_table_cell_highlighted(self, event: DataTable.CellHighlighted | None) -> None:
+        """Update the status label when a cell is selected."""
+        label = await wait_for_element(self.query_one, selector=Label)
+        table = (  # pyright: ignore[reportUnknownVariableType]
+            event.data_table  # pyright: ignore[reportUnknownMemberType]
+            if event is not None
+            else (await wait_for_element(self.query_one, selector=DataTable))
+        )
+        label.update(
+            "{row} / {total} | {counts}".format(
+                row=table.cursor_row + 1,  # pyright: ignore[reportUnknownMemberType]
+                total=table.row_count,  # pyright: ignore[reportUnknownMemberType]
+                counts=" | ".join(
+                    {
+                        f"{k}: {v} ({v/table.row_count:.1%})"  # pyright: ignore[reportUnknownMemberType]
+                        for k, v in Counter(  # pyright: ignore[reportUnknownVariableType]
+                            table.get_column(  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+                                "tag"
+                            )
+                        ).most_common()
+                    }
+                ),
+            )
+        )
+        self.logger.debug(
+            "Cell selected",
+            extra={
+                "row": table.cursor_row,
+                "column": table.cursor_column,
+                "context": "POReviewScreen.on_data_table_cell_selected",
+            },
+        )
+
     async def on_mount(self):
         """Focus the data table when the modal is mounted."""
         table = await wait_for_element(self.query_one, selector=DataTable)
@@ -127,29 +169,47 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
 
     def edit_translation_callback(self, result: Any):
         """Edit the translation of the currently selected entry."""
-        if not isinstance(result, str):
+        if (
+            not isinstance(result, dict)
+            or not result
+            or not all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in result.items()  # pyright: ignore[reportUnknownVariableType]
+            )
+        ):
             self.logger.warning(
-                "Edit translation callback received non-string result, ignoring.",
-                extra={"result": str(result), "context": "POReviewScreen.edit_translation_callback"},
+                "Edit translation callback received invalid result, ignoring.",
+                extra={
+                    "result": result,  # pyright: ignore[reportUnknownArgumentType]
+                    "context": "POReviewScreen.edit_translation_callback",
+                },
             )
             return
 
         self.logger.debug(
-            "Editing translation", extra={"new_value": result, "context": "POReviewScreen.edit_translation"}
+            "Editing translation",
+            extra={
+                "new_value": result,  # pyright: ignore[reportUnknownArgumentType]
+                "context": "POReviewScreen.edit_translation",
+            },
         )
         table: DataTable[str] = self.query_one(DataTable)  # pyright: ignore[reportUnknownVariableType]
-        for label, value in ((_("MsgStr"), escape_control_chars(result)), (_("Tag"), POFileEntryTag.REVIEWED.value)):
-            column_index = [f"{column.label}" for column in table.columns.values()].index(label)
+        for idx, (key, value) in enumerate(  # pyright: ignore[reportUnknownVariableType]
+            result.items()  # pyright: ignore[reportUnknownArgumentType]
+        ):
+            column_index = table.get_column_index(f"{key}")
             coordinate = Coordinate(table.cursor_row, column_index)
             old_value = table.get_cell_at(coordinate)
-            table.update_cell_at(coordinate, value, update_width=True)
+            table.update_cell_at(coordinate, f"{value}", update_width=True)
+            self._has_changes |= old_value != f"{value}"
+            self.run_worker(self.on_data_table_cell_highlighted(None), group="review")
 
-            if label == _("MsgStr"):
+            if idx == 0:
                 self.notify(
                     _("Translation updated.")
                     + "\n"
                     + _('Previous value was: "{old_value}", current value is: "{new_value}".').format(
-                        old_value=old_value or _("<empty>"), new_value=result or _("<empty>")
+                        old_value=old_value or _("<empty>"), new_value=f"{value}" or _("<empty>")
                     ),
                     timeout=2,
                     title=_("✅ Success"),
@@ -160,7 +220,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
                 extra={
                     "row": table.cursor_row,
                     "column": column_index,
-                    "new_value": value,
+                    "new_value": f"{value}",
                     "old_value": old_value,
                     "context": "POReviewScreen.edit_translation",
                 },
@@ -182,9 +242,9 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         self.logger.debug("Filtering table", extra={"pattern": result, "context": "POReviewScreen.filter"})
 
         tmp_table = DataTable[str](zebra_stripes=True)
-        tmp_table.add_columns("", _("Type"), _("MsgId"), _("MsgStr"), _("Tag"))
+        TableRow.define_columns(tmp_table)
         for cell in self.generate_cells():
-            tmp_table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr, cell.tag)
+            cell.add_to_table(tmp_table)
 
         table: DataTable[str] = self.query_one(DataTable)  # pyright: ignore[reportUnknownVariableType]
         selected_col = table.cursor_column
@@ -192,11 +252,11 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
 
         table.clear()
         for cell in self.generate_cells():
-            with NotifyException(self, self.logger):
-                if not fnmatch(cell[selected_col], result):
+            with handle_exception(self, self.logger):
+                if not fnmatch(cell.actual_row[selected_col], result):
                     continue
 
-                table.add_row(cell.row_no, cell.type, cell.msgid, cell.msgstr, cell.tag)
+                cell.add_to_table(table)
 
         self.notify(
             _('Table column "{column}" filtered with "{pattern}".').format(column=column_name, pattern=result),
@@ -238,13 +298,20 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
             return
 
         current_row = table.get_row_at(table.cursor_row)
+        # coordinate = Coordinate(table.cursor_row, table.cursor_column)
+
         for entry, idx in self.entries:
-            if idx is None and current_row[1] == "Singular" and escape_control_chars(entry.msgid) == current_row[2]:
+            if (
+                idx is None
+                and current_row[table.get_column_index("type")] == "Singular"
+                and escape_control_chars(entry.msgid) == current_row[table.get_column_index("msgid")]
+            ):
                 break
-            elif (
+            if (
                 idx is not None
-                and f"{current_row[1]}".startswith("Plural")
-                and escape_control_chars(entry.msgid if idx == 0 else entry.msgid_plural) == current_row[2]
+                and f"{current_row[table.get_column_index("type")]}".startswith("Plural")
+                and escape_control_chars(entry.msgid if idx == 0 else entry.msgid_plural)
+                == current_row[table.get_column_index("msgid")]
             ):
                 break
 
@@ -275,6 +342,7 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
         """Save the PO file."""
         self.logger.info("Saving PO file...", extra={"context": "POReviewScreen.action_save"})
         self.pofile.save(str(self.pofile_path))  # pyright: ignore[reportUnknownMemberType]
+        self._has_changes = False
         self.notify(
             _('PO file saved to "{path}".').format(path=str(self.pofile_path)),
             timeout=2,
@@ -286,6 +354,13 @@ class POReviewScreen(ModalScreen[None], POFileHandler):
 
     async def action_abort(self):
         """Quit without saving."""
+        if not self._has_changes:
+            self.logger.info(
+                "No changes to save, aborting without confirmation.", extra={"context": "POReviewScreen.action_abort"}
+            )
+            self.dismiss()
+            self.logger.info("POReviewScreen modal dismissed", extra={"context": "POReviewScreen.action_abort"})
+            return
 
         def callback(result: Any):
             if result:

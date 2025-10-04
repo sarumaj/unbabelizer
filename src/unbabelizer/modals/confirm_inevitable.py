@@ -1,4 +1,4 @@
-from gettext import gettext as _
+from typing import TYPE_CHECKING, overload
 
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -8,6 +8,11 @@ from textual.widgets import Button, Footer, Header, Static
 
 from ..log import Logger
 from ..utils import apply_styles, wait_for_element
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
 
 
 class ConfirmInevitable(ModalScreen[bool]):

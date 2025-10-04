@@ -2,13 +2,25 @@ import asyncio
 import re
 import traceback
 from ast import literal_eval
-from collections import Counter
-from contextlib import AbstractContextManager
+from contextlib import contextmanager
+from datetime import datetime
 from functools import wraps
-from gettext import gettext as _
-from types import TracebackType
-from typing import Any, Callable, Literal, LiteralString, Optional, ParamSpec, Protocol, Sequence, Type, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Literal,
+    LiteralString,
+    Optional,
+    ParamSpec,
+    Protocol,
+    Sequence,
+    TypeVar,
+    Union,
+    overload,
+)
 
+import polib
 from babel import negotiate_locale
 from babel.messages.frontend import CommandLineInterface
 from deep_translator.exceptions import LanguageNotSupportedException  # pyright: ignore[reportMissingTypeStubs]
@@ -16,6 +28,13 @@ from textual.notifications import SeverityLevel
 from textual.widget import Widget
 
 from .log import Logger
+from .translation import determine_most_common_locale_separator
+
+if TYPE_CHECKING:
+
+    @overload
+    def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
+
 
 R = TypeVar("R")
 P = ParamSpec("P")
@@ -31,44 +50,6 @@ class NotifyProtocol(Protocol):
         timeout: float | None = None,
         markup: bool = True,
     ): ...
-
-
-class NotifyException(AbstractContextManager["NotifyException"]):
-    """A context manager that notifies the user of any exceptions that occur within its block."""
-
-    def __init__(self, notifier: NotifyProtocol, logger: Logger):
-        """Initialize the NotifyException context manager.
-
-        Args:
-            notifier (NotifyProtocol): An object with a notify method to send notifications.
-        """
-        self.notifier = notifier
-        self.logger = logger
-
-    def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_instance: Optional[BaseException],
-        exc_traceback: Optional[TracebackType],
-    ) -> Optional[bool]:
-        if exc_instance:
-            self.notifier.notify(
-                _("An error occurred: {error}").format(error=str(exc_instance)),
-                title=_("⛔ Unexpected Error"),
-                severity="error",
-                timeout=None,
-                markup=False,
-            )
-            self.logger.error(
-                "An error occurred",
-                extra={
-                    "context": "NotifyException.__exit__",
-                    "error": str(exc_instance),
-                    "traceback": traceback.format_tb(exc_traceback) if exc_traceback else "No traceback",
-                    "type": str(exc_type),
-                },
-            )
-            return True
 
 
 def apply_styles(
@@ -114,34 +95,6 @@ def correct_translation(msgid: str, translation: str) -> str:
     return translation.strip()
 
 
-def determine_most_common_locale_separator(locales: Sequence[str]) -> str:
-    """Determine the most common locale separator in a list of locales.
-    Args:
-        locales (Sequence[str]): A list of locale strings.
-    Returns:
-        str: The most common locale separator ("-" or "_"). If there is a tie or
-             no separators found, returns "_".
-    """
-    counter = Counter(
-        sep
-        for locale in locales
-        for sep in ("-" if "-" in locale else "_" if "_" in locale else None,)
-        if sep is not None
-    )
-
-    results = counter.most_common(2)
-    if not results:
-        return "_"
-
-    if len(results) == 1:
-        return results[0][0]
-
-    if results[0][1] == results[1][1]:
-        return "_"
-
-    return results[0][0]
-
-
 def escape_control_chars(text: str) -> str:
     """Escape control characters using character class pattern"""
 
@@ -184,6 +137,38 @@ def get_base_type(ann: Any) -> Any:
         return type(ann.__args__[0])  # pyright: ignore[reportUnknownVariableType]
 
     return ann
+
+
+@contextmanager
+def handle_exception(notifier: NotifyProtocol, logger: Logger):
+    """A context manager that notifies the user of any exceptions that occur within its block.
+
+    Args:
+        notifier (NotifyProtocol): An object with a notify method to send notifications.
+        logger (Logger): Logger instance for error logging.
+
+    Yields:
+        None: This context manager doesn't yield any value.
+    """
+    try:
+        yield
+    except Exception as exc_instance:
+        notifier.notify(
+            _("An error occurred: {error}").format(error=str(exc_instance)),
+            title=_("⛔ Unexpected Error"),
+            severity="error",
+            timeout=None,
+            markup=False,
+        )
+        logger.error(
+            "An error occurred",
+            extra={
+                "context": "handle_exception",
+                "error": str(exc_instance),
+                "traceback": traceback.format_exception(type(exc_instance), exc_instance, exc_instance.__traceback__),
+                "type": str(type(exc_instance)),
+            },
+        )
 
 
 def handle_unsupported_language(func: Callable[P, R]) -> Callable[P, R]:
@@ -250,7 +235,12 @@ def handle_unsupported_language(func: Callable[P, R]) -> Callable[P, R]:
 def run_babel_cmd(args: Sequence[str]):
     """Run a Babel command with the given arguments."""
     cli = CommandLineInterface()
-    cli.run(["pybabel", *args])  # pyright: ignore[reportUnknownMemberType]
+    try:
+        cli.run(["pybabel", *args])  # pyright: ignore[reportUnknownMemberType]
+    except SystemExit as e:
+        raise SystemExit(
+            f'Babel command failed with exit code {e.code}: command was: "pybabel {" ".join(args)}"'
+        ) from e
 
 
 def unescape_control_chars(text: str) -> str:
@@ -313,3 +303,24 @@ async def wait_for_element(
             total_time += interval
 
     raise ValueError("UI element not found within timeout")
+
+
+def write_new_tcomment(entry: polib.POEntry, comment: str):
+    """Write a new translator comment to a PO entry, replacing any existing comment with the same prefix.
+
+    Args:
+        entry (polib.POEntry): The PO entry to modify.
+        comment (str): The new translator comment to add.
+    """
+    entry.tcomment = "\n".join(
+        (
+            (entry.tcomment or ""),
+            (
+                comment.format(
+                    timestamp=datetime.now().isoformat(sep=" ", timespec="seconds"),
+                )
+                if "{timestamp}" in comment
+                else comment
+            ),
+        )
+    )
