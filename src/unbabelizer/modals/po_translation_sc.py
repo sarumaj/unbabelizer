@@ -1,6 +1,6 @@
 import asyncio
 from pathlib import Path
-from typing import TYPE_CHECKING, Tuple, TypedDict, overload
+from typing import TYPE_CHECKING, Tuple, overload
 
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -9,25 +9,19 @@ from textual.screen import ModalScreen
 from textual.suggester import SuggestFromList
 from textual.validation import Regex
 from textual.widgets import Footer, Header, Input, ProgressBar, Select, Switch
+from textual.worker_manager import WorkerManager
 
 from ..log import Logger
-from ..types import POFileEntryTag, POFileHandler, TranslationServices
+from ..types.po_file.handler import POFileHandler
+from ..types.po_file.tag import POFileEntryTag
+from ..types.translation_service.config import TranslationServiceConfig
+from ..types.translation_service.services import TranslationServices
 from ..utils import apply_styles, correct_translation, handle_exception, wait_for_element, write_new_tcomment
 
 if TYPE_CHECKING:
 
     @overload
     def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
-
-
-class TranslationServiceConfig(TypedDict, total=False):
-    source: str
-    target: str
-    api_key: str | None
-    proxies: dict[str, str] | None
-    model: str | None
-    region: str | None
-    api_key_type: str | None
 
 
 class Translator(ModalScreen[None], POFileHandler):
@@ -38,6 +32,7 @@ class Translator(ModalScreen[None], POFileHandler):
         Binding(key="q", action="quit", description=_("Quit"), show=True),
         Binding(key="o", action="toggle_override", description=_("Toggle Override Existing"), show=True),
         Binding(key="f", action="toggle_fuzzy", description=_("Toggle Fuzzy New Translations"), show=True),
+        Binding(key="c", action="cancel", description=_("Cancel translation task"), show=True),
     ]
 
     def __init__(self, po_path: Path, translation_config: TranslationServiceConfig):
@@ -75,13 +70,21 @@ class Translator(ModalScreen[None], POFileHandler):
             "logger",
         )
 
+    @property
+    def workers(self) -> WorkerManager:
+        """Return the application's worker manager."""
+        return getattr(
+            self.app,  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+            "workers",
+        )  # pyright: ignore[reportUnknownMemberType]
+
     def compose_proxies(self) -> ComposeResult:
         """Compose the proxy input fields."""
         yield HorizontalGroup(
             apply_styles(
                 Input(
                     placeholder=_("HTTP Proxy"),
-                    value=((self._translation_config.get("proxies", {}) or {}).get("http", "")),
+                    value=((self._translation_config.get("proxies") or {}).get("http", "")),
                     name="proxy_http",
                     suggester=SuggestFromList(["http://"]),
                 ),
@@ -90,7 +93,7 @@ class Translator(ModalScreen[None], POFileHandler):
             apply_styles(
                 Input(
                     placeholder=_("HTTPS Proxy"),
-                    value=((self._translation_config.get("proxies", {}) or {}).get("https", "")),
+                    value=((self._translation_config.get("proxies") or {}).get("https", "")),
                     name="proxy_https",
                     suggester=SuggestFromList(["https://"]),
                 ),
@@ -149,14 +152,21 @@ class Translator(ModalScreen[None], POFileHandler):
                 apply_styles(
                     Input(value=_("Override existing translations:"), disabled=True), width="2fr", vertical="top"
                 ),
-                apply_styles(Switch(id="override_translations", value=False), width="1fr", vertical="top"),
+                apply_styles(
+                    Switch(
+                        id="override_translations",
+                        value=self._translation_config["presets"].get("override_existing_translations") or False,
+                    ),
+                    width="1fr",
+                    vertical="top",
+                ),
             )
 
             yield HorizontalGroup(
                 apply_styles(
                     Input(
                         value=_("Fuzzy new translations:        "),
-                        disabled=self._translation_config.get("fuzzy_new_translations") or True,
+                        disabled=self._translation_config["presets"].get("fuzzy_new_translations") or True,
                     ),
                     width="2fr",
                     vertical="top",
@@ -169,10 +179,12 @@ class Translator(ModalScreen[None], POFileHandler):
                 *compose_switches(),
                 apply_styles(
                     Select(
-                        ((s.value, s.value) for s in TranslationServices),
+                        ((s.translation_service_name, s.value) for s in TranslationServices),
                         value=TranslationServices(
-                            self._translation_config.get("default_translation_service")
-                            or TranslationServices.GOOGLE_TRANSLATE.value
+                            TranslationServices.from_service_name(
+                                self._translation_config["presets"].get("default_translation_service")
+                                or TranslationServices.GOOGLE_TRANSLATE.translation_service_name
+                            )
                         ).value,
                         id="translation_service",
                         prompt=_("Select Translation Service"),
@@ -226,8 +238,13 @@ class Translator(ModalScreen[None], POFileHandler):
 
     def check_action(self, action: str, parameters: Tuple[object, ...]) -> bool | None:
         """Check if an action can be performed."""
-        _ = (action, parameters)  # Unused
-        return not self._translating
+        _ = parameters  # Unused
+        allowed = not self._translating and action not in ("cancel",) or self._translating and action in ("cancel",)
+        self.logger.debug(
+            "Action check",
+            extra={"context": "Translator.check_action", "action": action, "allowed": allowed},
+        )
+        return allowed
 
     async def on_select_changed(self, event: Select.Changed):
         """Handle changes in the translation service selection."""
@@ -300,11 +317,46 @@ class Translator(ModalScreen[None], POFileHandler):
         self.run_worker(self.translate_pofile, group="translation")
         self.logger.info("Translation process started", extra={"context": "Translator.action_translate"})
 
+    async def action_cancel(self):
+        """Cancel the ongoing translation process."""
+
+        self.logger.info(
+            "Cancelling translation process",
+            extra={"context": "Translator.action_cancel", "translating": self._translating},
+        )
+        canceled = self.workers.cancel_group(  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType]
+            self, "translation"
+        )
+        self._translating = not canceled
+        if canceled:
+            self.notify(
+                _("Translation process cancelled."),
+                timeout=5,
+                title=_("❌ Translation Cancelled"),
+            )
+            self.dismiss()
+            self.logger.info(
+                "Translation process cancelled and modal dismissed",
+                extra={
+                    "context": "Translator.action_cancel",
+                    "canceled_workers": canceled,  # pyright: ignore[reportUnknownArgumentType]
+                },
+            )
+
+        self.logger.info(
+            "Translation process cancellation attempted",
+            extra={
+                "context": "Translator.action_cancel",
+                "canceled_workers": canceled,  # pyright: ignore[reportUnknownArgumentType]
+            },
+        )
+
     async def translate_pofile(self):
         """Translate the PO file using Google Translate."""
         self.logger.info("Translating PO file...", extra={"context": "Translator.translate_po"})
 
         self._translating = True
+        self.refresh_bindings()
         progressbar = await wait_for_element(lambda: self.query_one(ProgressBar))
         override_existing = (await wait_for_element(lambda: self.query_one("#override_translations", Switch))).value
         mark_as_fuzzy = (await wait_for_element(lambda: self.query_one("#fuzzy_translations", Switch))).value

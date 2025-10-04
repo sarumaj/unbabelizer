@@ -1,5 +1,4 @@
 import asyncio
-from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Tuple, overload
 
@@ -15,20 +14,13 @@ from .modals.confirm_inevitable import ConfirmInevitable
 from .modals.po_review_sc import POReviewScreen
 from .modals.po_translation_sc import Translator
 from .translation import get_display_name_for_lang_code
-from .types import SubCommand
+from .types.subcommand import SubCommands
 from .utils import apply_styles, handle_exception, run_babel_cmd, wait_for_element
 
 if TYPE_CHECKING:
 
     @overload
     def _(message: str) -> str: ...  # pyright: ignore[reportInconsistentOverload, reportNoOverloadImplementation]
-
-
-class AppSubCommand(Enum):
-    EXTRACT_UPDATE = SubCommand("extract_update", _("Extract and Update"), False, True)
-    TRANSLATE = SubCommand("translate", _("Translate"), True, False)
-    REVIEW = SubCommand("review", _("Review"), True, True)
-    COMPILE = SubCommand("compile", _("Compile"), False, True)
 
 
 class UnbabelizerApp(App[None]):
@@ -82,16 +74,33 @@ class UnbabelizerApp(App[None]):
         """Compose the UI elements for the main application."""
         yield Header()
         with TabbedContent(initial=""):
+
             for lang in self._config.dest_lang:
                 with TabPane(get_display_name_for_lang_code(lang), name=lang):
                     yield apply_styles(
                         ScrollableContainer(
                             Static(_("Translation Workflow")),
                             SelectionList(
-                                AppSubCommand.EXTRACT_UPDATE.value.selection_list_item,
-                                AppSubCommand.TRANSLATE.value.selection_list_item,
-                                AppSubCommand.REVIEW.value.selection_list_item,
-                                AppSubCommand.COMPILE.value.selection_list_item,
+                                (
+                                    SubCommands.EXTRACT_UPDATE.command_description,
+                                    SubCommands.EXTRACT_UPDATE.command_name,
+                                    self._config.is_workflow_action_enabled(SubCommands.EXTRACT_UPDATE, True),
+                                ),
+                                (
+                                    SubCommands.TRANSLATE.command_description,
+                                    SubCommands.TRANSLATE.command_name,
+                                    self._config.is_workflow_action_enabled(SubCommands.TRANSLATE, False),
+                                ),
+                                (
+                                    SubCommands.REVIEW.command_description,
+                                    SubCommands.REVIEW.command_name,
+                                    self._config.is_workflow_action_enabled(SubCommands.REVIEW, True),
+                                ),
+                                (
+                                    SubCommands.COMPILE.command_description,
+                                    SubCommands.COMPILE.command_name,
+                                    self._config.is_workflow_action_enabled(SubCommands.COMPILE, True),
+                                ),
                                 id=f"workflow_selection_list_{lang}",
                             ),
                             apply_styles(
@@ -194,10 +203,10 @@ class UnbabelizerApp(App[None]):
         )
         progress_bar.update(total=100, progress=0)
         actions = {
-            AppSubCommand.EXTRACT_UPDATE.value.name: self.flow_extract_and_update,
-            AppSubCommand.TRANSLATE.value.name: self.flow_translate_pofile,
-            AppSubCommand.REVIEW.value.name: self.flow_review_pofile,
-            AppSubCommand.COMPILE.value.name: self.flow_compile_translations,
+            SubCommands.EXTRACT_UPDATE.value.name: self.flow_extract_and_update,
+            SubCommands.TRANSLATE.value.name: self.flow_translate_pofile,
+            SubCommands.REVIEW.value.name: self.flow_review_pofile,
+            SubCommands.COMPILE.value.name: self.flow_compile_translations,
         }
         for action in actions:
             if action in selections:

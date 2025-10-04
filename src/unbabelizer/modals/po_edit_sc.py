@@ -8,7 +8,9 @@ from textual.screen import ModalScreen
 from textual.widgets import Footer, Input
 
 from ..log import Logger
-from ..types import FnmatchHighlighter, FStringHighlighter, Note, POFileEntryTag
+from ..types.highlighter import FnmatchHighlighter, FStringHighlighter
+from ..types.note import Note
+from ..types.po_file.tag import POFileEntryTag
 from ..utils import apply_styles, escape_control_chars, unescape_control_chars, wait_for_element, write_new_tcomment
 
 if TYPE_CHECKING:

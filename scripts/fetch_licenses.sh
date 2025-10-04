@@ -22,7 +22,7 @@ echo "Downloading license files..."
 # Download licenses
 fetch_license "asciinema" "https://raw.githubusercontent.com/asciinema/asciinema/refs/heads/develop/LICENSE"
 fetch_license "babel" "https://raw.githubusercontent.com/python-babel/babel/refs/heads/master/LICENSE"
-fetch_license "googletrans" "https://raw.githubusercontent.com/ssut/py-googletrans/refs/heads/main/LICENSE"
+fetch_license "deep_translator" "https://raw.githubusercontent.com/nidhaloff/deep-translator/refs/heads/master/LICENSE"
 fetch_license "jmespath" "https://raw.githubusercontent.com/jmespath/jmespath.py/refs/heads/develop/LICENSE"
 fetch_license "polib" "https://raw.githubusercontent.com/izimobil/polib/refs/heads/master/LICENSE"
 fetch_license "pydantic" "https://raw.githubusercontent.com/pydantic/pydantic/main/LICENSE"

@@ -47,5 +47,3 @@ dest_lang = ["de", "es", "pl", "ja", "ru"]
 input_paths = ["src"]
 locale_dir = "src/unbabelizer/locales"
 src_lang = "en"
-
-
