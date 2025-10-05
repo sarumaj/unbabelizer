@@ -35,6 +35,7 @@ jobs:
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+          git_push_gpgsign: false
           trust_level: 4
 
       - name: Set up Python
