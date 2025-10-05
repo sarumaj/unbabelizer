@@ -72,15 +72,21 @@ jobs:
         shell: bash
 
       - name: Update changelog with commitizen
-        uses: commitizen-tools/commitizen-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          changelog: true
-          push: true
-          commit: true
-          gpg_sign: true
-          git_name: "GitHub Actions Bot"
-          git_email: "github-actions-commitizen@users.noreply.github.com"
+        run: |
+          pip install commitizen
+          cz changelog --unreleased-version=$VERSION
+          git config --local user.email "github-actions-commitizen@users.noreply.github.com"
+          git config --local user.name "GitHub Actions Bot"
+          git add CHANGELOG.md pyproject.toml
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -S -m "chore: update changelog and version for $VERSION"
+            git push origin HEAD:main
+          fi
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cache pip packages
         uses: actions/cache@v4
