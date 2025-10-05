@@ -1,11 +1,3 @@
-## 1.2.2 (2025-10-05)
-
-## v1.2.2 (2025-10-04)
-
-### Fix
-
-- refactor config and add missing translations
-
 ## v1.2.1 (2025-10-04)
 
 ### Feat
