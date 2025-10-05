@@ -9,6 +9,7 @@
 name: release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*"
@@ -18,12 +19,21 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -41,6 +51,17 @@ jobs:
         run: |
           sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
         shell: bash
+
+      - name: Update changelog with commitizen
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          changelog: true
+          push: true
+          commit: true
+          gpg_sign: true
+          git_name: "github-actions-commitizen"
+          git_email: "github-actions-commitizen@users.noreply.github.com"
 
       - name: Cache pip packages
         uses: actions/cache@v4
