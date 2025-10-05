@@ -15,7 +15,7 @@ on:
       - "v*"
 
 jobs:
-  deploy:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -43,9 +43,28 @@ jobs:
       - name: Extract version from tag
         id: version
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [[ -z "$TAG" ]]; then
+              echo "❌ No tags found in repository. Please create a tag first."
+              exit 1
+            fi
+            echo "✅ Using latest tag for manual dispatch: $TAG"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            echo "✅ Using tag from push event: $TAG"
+          fi
+
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+.*$ ]]; then
+            echo "❌ Invalid tag format: $TAG (expected: v1.2.3 or similar)"
+            exit 1
+          fi
+
           VERSION="${TAG#v}"
+          echo "🏷️ Tag: $TAG"
+          echo "📦 Version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Update version
         run: |
@@ -60,7 +79,7 @@ jobs:
           push: true
           commit: true
           gpg_sign: true
-          git_name: "github-actions-commitizen"
+          git_name: "GitHub Actions Bot"
           git_email: "github-actions-commitizen@users.noreply.github.com"
 
       - name: Cache pip packages
@@ -91,7 +110,9 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.TAG }}
           draft: "false"
           generate_release_notes: "true"
           make_latest: "true"
           prerelease: "false"
+        continue-on-error: true # Don't fail if release already exists
