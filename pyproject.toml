@@ -39,6 +39,9 @@ version_scheme = "pep440"
 version_provider = "pep621"
 update_changelog_on_bump = true
 
+[tool.setuptools.package-data]
+"unbabelizer.locales" = ["*/LC_MESSAGES/*.po", "*/LC_MESSAGES/*.mo"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
