@@ -77,15 +77,28 @@ jobs:
       - name: Update changelog with commitizen
         run: |
           pip install commitizen
-          cz changelog --incremental
 
-          git add CHANGELOG.md pyproject.toml
-          if git diff --cached --quiet; then
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            DEFAULT_BRANCH="${GITHUB_REF#refs/heads/}"
+            if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+              DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
+            fi
+            echo "🔄 Switching from detached HEAD to $DEFAULT_BRANCH branch..."
+            git checkout $DEFAULT_BRANCH
+            git pull origin $DEFAULT_BRANCH
+          fi
+
+          cz changelog
+
+          if git diff --quiet && git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            echo "Committing changes with GPG signing..."
+            git lfs pull || true
+            git checkout -- src/unbabelizer/locales/de/LC_MESSAGES/messages.mo || true
+            git add CHANGELOG.md pyproject.toml
+            echo "✅ Committing changes with GPG signing..."
             git commit -S -m "chore: update changelog and version for $VERSION"
-            git push origin HEAD:main
+            git push
           fi
         shell: bash
         env:
