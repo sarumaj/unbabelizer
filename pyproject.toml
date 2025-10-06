@@ -25,7 +25,7 @@ name = "unbabelizer"
 readme = "README.md"
 requires-python = ">=3.12"
 scripts = {unbabelizer = "unbabelizer.__main__:main"}
-version = "1.2.3"
+version = "1.2.4"
 
 [tool.black]
 line-length = 120
