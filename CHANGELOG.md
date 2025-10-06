@@ -1,7 +1,10 @@
+## Unreleased
+
 ## v1.2.3 (2025-10-06)
 
 ### Fix
 
+- use license files instead of license classifier
 - ship locales as package data
 
 ## v1.2.2 (2025-10-04)
