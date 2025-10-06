@@ -93,8 +93,6 @@ jobs:
           if git diff --quiet && git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git lfs pull || true
-            git checkout -- src/unbabelizer/locales/de/LC_MESSAGES/messages.mo || true
             git add CHANGELOG.md pyproject.toml
             echo "✅ Committing changes with GPG signing..."
             git commit -S -m "chore: update changelog and version for $VERSION"
