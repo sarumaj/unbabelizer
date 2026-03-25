@@ -246,9 +246,9 @@ def write_new_tcomment(entry: polib.POEntry, comment: str):
         entry (polib.POEntry): The PO entry to modify.
         comment (str): The new translator comment to add.
     """
-    entry.tcomment = "\n".join(
+    entry.tcomment = "\n".join(  # pyright: ignore[reportUnknownArgumentType]
         (
-            (entry.tcomment or ""),
+            (entry.tcomment or ""),  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
             (
                 comment.format(
                     timestamp=datetime.now().isoformat(sep=" ", timespec="seconds"),

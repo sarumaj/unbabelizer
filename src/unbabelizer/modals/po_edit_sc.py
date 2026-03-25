@@ -110,7 +110,7 @@ class POEditScreen(ModalScreen[Dict[str, str] | str]):
                 valid_empty=True,
                 value=escape_control_chars(  # pyright: ignore[reportUnknownArgumentType]
                     (
-                        self.entry.msgstr  # pyright: ignore[reportUnknownMemberType]
+                        self.entry.msgstr  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
                         if self.idx is None
                         else self.entry.msgstr_plural[self.idx]  # pyright: ignore[reportUnknownMemberType]
                     )

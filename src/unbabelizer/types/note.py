@@ -17,8 +17,12 @@ class Note(str):
         Returns:
             Note: The extracted note, or an empty note if none found.
         """
-        if entry.comment:
-            match = re.search(cls.note_pattern, entry.comment, re.DOTALL | re.MULTILINE)
+        if entry.comment:  # pyright: ignore[reportUnknownMemberType]
+            match = re.search(
+                cls.note_pattern,
+                entry.comment,  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
+                re.DOTALL | re.MULTILINE,
+            )
             if match:
                 return cls(match.group(1).strip())
 
@@ -31,5 +35,9 @@ class Note(str):
             entry (polib.POEntry): The PO entry to update.
         """
         if self:
-            entry.comment = re.sub(self.note_pattern, "", entry.comment).strip()
+            entry.comment = re.sub(
+                self.note_pattern,
+                "",
+                entry.comment,  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
+            ).strip()
             entry.comment = ("\n" if entry.comment else "") + self.fstring_template.format(note=self)

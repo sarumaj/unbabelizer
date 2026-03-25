@@ -122,6 +122,11 @@ class Config(Presets):
         description=_("Domain for the .po files"),
         json_schema_extra={"pyproject.toml": "tool.unbabelizer.domain", "argparse.flag": "--domain"},
     )
+    noninteractive: bool = Field(
+        default=False,
+        description=_("Run in non-interactive (headless) mode"),
+        json_schema_extra={"argparse.flag": "--non-interactive"},
+    )
     mapping_file: str = Field(
         default="[python: **.py]\nencoding = utf-8\n",
         description=_("Path to the Babel mapping file (as CLI argument) or its content (in pyproject.toml config)"),
@@ -191,6 +196,15 @@ class Config(Presets):
             fuzzy_new_translations=self.fuzzy_new_translations,
             default_translation_service=self.default_translation_service,
         )
+
+    @property
+    def potfile_path(self) -> Path:
+        """Path to the .pot file."""
+        return self.locale_dir / "base.pot"
+
+    def get_pofile_path(self, idx: int) -> Path:
+        """Path to the .po file for the target language."""
+        return self.locale_dir / self.dest_lang[idx] / "LC_MESSAGES" / f"{self.domain}.po"
 
     def is_workflow_action_enabled(self, action: SubCommands, default: bool) -> bool:
         if self.presets["workflow_actions"] is None:

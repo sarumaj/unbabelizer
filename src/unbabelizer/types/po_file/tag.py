@@ -24,9 +24,11 @@ class POFileEntryTag(str, Enum):
             entry (polib.POEntry): The PO entry to modify.
         """
         entry.flags = [
-            flag for flag in (entry.flags or []) if flag not in tuple(member.value for member in self.__class__)
+            flag
+            for flag in (entry.flags or [])  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
+            if flag not in tuple(member.value for member in self.__class__)
         ]
-        entry.flags.append(self.value)
+        entry.flags.append(self.value)  # pyright: ignore[reportUnknownMemberType]
 
     @classmethod
     def fish(cls, entry: polib.POEntry, default: "POFileEntryTag") -> "POFileEntryTag":
@@ -39,7 +41,7 @@ class POFileEntryTag(str, Enum):
         Returns:
             POFileEntryTag: The matching tag or the default.
         """
-        for flag in entry.flags or []:
+        for flag in entry.flags or []:  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
             for member in cls:
                 if flag == member.value:
                     return member

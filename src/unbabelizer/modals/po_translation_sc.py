@@ -449,12 +449,14 @@ class Translator(ModalScreen[None], POFileHandler):
 
                 if changed:
                     write_new_tcomment(
-                        entry,
+                        entry,  # pyright: ignore[reportUnknownArgumentType]
                         " [Translated with {translation_service} on {{timestamp}}]".format(
                             translation_service=selected_service.value,
                         ),
                     )
-                    (POFileEntryTag.FUZZY if mark_as_fuzzy else POFileEntryTag.UNCONFIRMED).apply(entry)
+                    (POFileEntryTag.FUZZY if mark_as_fuzzy else POFileEntryTag.UNCONFIRMED).apply(
+                        entry,  # pyright: ignore[reportUnknownMemberType,reportUnknownArgumentType]
+                    )
 
             self.logger.info(
                 "Translation completed, saving PO file...",

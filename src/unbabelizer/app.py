@@ -58,17 +58,12 @@ class UnbabelizerApp(App[None]):
     @property
     def potfile_path(self) -> Path:
         """Path to the .pot file."""
-        return self._config.locale_dir / "base.pot"
+        return self._config.potfile_path
 
     @property
     def pofile_path(self) -> Path:
         """Path to the .po file for the target language."""
-        return (
-            self._config.locale_dir
-            / self._config.dest_lang[self._current_lang_idx]
-            / "LC_MESSAGES"
-            / f"{self._config.domain}.po"
-        )
+        return self._config.get_pofile_path(self._current_lang_idx)
 
     def compose(self) -> ComposeResult:
         """Compose the UI elements for the main application."""
@@ -222,102 +217,115 @@ class UnbabelizerApp(App[None]):
         self.logger.info("Quitting application...", extra={"context": "unbabelizerApp.quit"})
         self.exit()
 
-    @work(group="main")
-    async def flow_extract_and_update(self):
+    @staticmethod
+    def run_action_extract_and_update(
+        logger: Logger, config: Config, current_lang_idx: int, potfile_path: Path, pofile_path: Path
+    ):
         """Extract messages and update or initiate .po files."""
-        self.logger.info(
+        logger.info(
             "Extracting and updating translations...", extra={"context": "unbabelizerApp.flow_extract_and_update"}
         )
 
+        # Extraction (overwrite existing .pot file)
+        mapping_file = config.locale_dir / "babel_mapping.txt"
+        logger.debug(
+            "Creating temporary Babel mapping file",
+            extra={"path": mapping_file, "context": "unbabelizerApp.flow_extract_and_update"},
+        )
+        mapping_file.touch()
+        mapping_file.write_text(config.mapping_file.strip() + "\n")
+        logger.debug(
+            "Babel mapping file content:",
+            extra={"content": mapping_file.read_text(), "context": "unbabelizerApp.flow_extract_and_update"},
+        )
+
+        logger.debug("Running Babel extract command", extra={"context": "unbabelizerApp.flow_extract_and_update"})
+
+        run_babel_cmd(
+            ["extract"]
+            + ["--project", config.title]
+            + ["--version", config.version]
+            + ["--copyright-holder", config.author]
+            + ["--last-translator", config.email]
+            + ["--sort-output"]
+            + ["-F", str(mapping_file.resolve())]
+            + ["-o", str(potfile_path)]
+            + [f"--keywords={kw}" for kw in config.keywords]
+            + (
+                ["--ignore-dirs", *(ex for ex in config.exclude_patterns)]
+                + ["--input-paths", *(str(i.resolve()) for i in config.input_paths)]
+                if config.exclude_patterns
+                else [str(i.resolve()) for i in config.input_paths]
+            )
+        )
+        mapping_file.unlink()
+
+        if pofile_path.exists():
+            logger.debug(
+                "Updating existing .po file",
+                extra={"path": pofile_path, "context": "unbabelizerApp.flow_extract_and_update"},
+            )
+            # Update existing .po file
+            run_babel_cmd(
+                ["update"]
+                + ["-D", config.domain]
+                + ["-i", str(potfile_path)]
+                + ["-d", str(config.locale_dir)]
+                + ["-l", config.dest_lang[current_lang_idx]]
+                + ["-w", str(config.line_width)]
+                + ["--init-missing"]
+                + ["--ignore-pot-creation-date"]
+            )
+        else:
+            logger.debug(
+                "Creating new .po file",
+                extra={"path": pofile_path, "context": "unbabelizerApp.flow_extract_and_update"},
+            )
+            # Initialize new .po file
+            run_babel_cmd(
+                ["init"]
+                + ["-i", str(potfile_path)]
+                + ["-d", str(config.locale_dir)]
+                + ["-l", config.dest_lang[current_lang_idx]]
+                + ["-w", str(config.line_width)]
+                + ["-D", config.domain]
+            )
+        logger.info(
+            "Extraction and update completed.",
+            extra={
+                "pot_path": potfile_path,
+                "po_path": pofile_path,
+                "context": "unbabelizerApp.flow_extract_and_update",
+            },
+        )
+
+    @staticmethod
+    def run_action_compile_translations(logger: Logger, config: Config):
+        """Compile .po files into .mo files."""
+        logger.info("Compiling translations...", extra={"context": "unbabelizerApp.flow_compile_translations"})
+        run_babel_cmd(["compile"] + ["-D", config.domain] + ["-d", str(config.locale_dir)])
+        logger.info("Compilation completed.", extra={"context": "unbabelizerApp.flow_compile_translations"})
+
+    @work(group="main")
+    async def flow_extract_and_update(self):
+        """Extract messages and update or initiate .po files."""
         async with self._lock:
             with handle_exception(self, self.logger):
-                # Extraction (overwrite existing .pot file)
-                mapping_file = self._config.locale_dir / "babel_mapping.txt"
-                self.logger.debug(
-                    "Creating temporary Babel mapping file",
-                    extra={"path": mapping_file, "context": "unbabelizerApp.flow_extract_and_update"},
-                )
-                mapping_file.touch()
-                mapping_file.write_text(self._config.mapping_file.strip() + "\n")
-                self.logger.debug(
-                    "Babel mapping file content:",
-                    extra={"content": mapping_file.read_text(), "context": "unbabelizerApp.flow_extract_and_update"},
-                )
-
-                self.logger.debug(
-                    "Running Babel extract command", extra={"context": "unbabelizerApp.flow_extract_and_update"}
-                )
-
-                run_babel_cmd(
-                    ["extract"]
-                    + ["--project", self._config.title]
-                    + ["--version", self._config.version]
-                    + ["--copyright-holder", self._config.author]
-                    + ["--last-translator", self._config.email]
-                    + ["--sort-output"]
-                    + ["-F", str(mapping_file.resolve())]
-                    + ["-o", str(self.potfile_path)]
-                    + [f"--keywords={kw}" for kw in self._config.keywords]
-                    + (
-                        ["--ignore-dirs", *(ex for ex in self._config.exclude_patterns)]
-                        + ["--input-paths", *(str(i.resolve()) for i in self._config.input_paths)]
-                        if self._config.exclude_patterns
-                        else [str(i.resolve()) for i in self._config.input_paths]
-                    )
-                )
-                mapping_file.unlink()
-
-                if self.pofile_path.exists():
-                    self.logger.debug(
-                        "Updating existing .po file",
-                        extra={"path": self.pofile_path, "context": "unbabelizerApp.flow_extract_and_update"},
-                    )
-                    # Update existing .po file
-                    run_babel_cmd(
-                        ["update"]
-                        + ["-D", self._config.domain]
-                        + ["-i", str(self.potfile_path)]
-                        + ["-d", str(self._config.locale_dir)]
-                        + ["-l", self._config.dest_lang[self._current_lang_idx]]
-                        + ["-w", str(self._config.line_width)]
-                        + ["--init-missing"]
-                        + ["--ignore-pot-creation-date"]
-                    )
-                else:
-                    self.logger.debug(
-                        "Creating new .po file",
-                        extra={"path": self.pofile_path, "context": "unbabelizerApp.flow_extract_and_update"},
-                    )
-                    # Initialize new .po file
-                    run_babel_cmd(
-                        ["init"]
-                        + ["-i", str(self.potfile_path)]
-                        + ["-d", str(self._config.locale_dir)]
-                        + ["-l", self._config.dest_lang[self._current_lang_idx]]
-                        + ["-w", str(self._config.line_width)]
-                        + ["-D", self._config.domain]
-                    )
-                self.logger.info(
-                    "Extraction and update completed.",
-                    extra={
-                        "pot_path": self.potfile_path,
-                        "po_path": self.pofile_path,
-                        "context": "unbabelizerApp.flow_extract_and_update",
-                    },
+                self.run_action_extract_and_update(
+                    self.logger,
+                    self._config,
+                    self._current_lang_idx,
+                    self.potfile_path,
+                    self.pofile_path,
                 )
                 self.notify(_("Extraction and update completed."), timeout=3, title=_("✅ Success"))
 
     @work(group="main")
     async def flow_compile_translations(self):
         """Compile .po files into .mo files."""
-        self.logger.info("Compiling translations...", extra={"context": "unbabelizerApp.flow_compile_translations"})
         async with self._lock:
             with handle_exception(self, self.logger):
-                run_babel_cmd(["compile"] + ["-D", self._config.domain] + ["-d", str(self._config.locale_dir)])
-                self.logger.info(
-                    "Compilation completed.", extra={"context": "unbabelizerApp.flow_compile_translations"}
-                )
-                self.notify(_("Compilation completed."), timeout=3, title=_("✅ Success"))
+                self.run_action_compile_translations(self.logger, self._config)
 
     @work(group="main")
     async def flow_translate_pofile(self):
