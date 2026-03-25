@@ -1,3 +1,9 @@
+## v1.3.0 (2026-03-25)
+
+### Feat
+
+- fix presets workflow actions
+
 ## v1.2.9 (2026-03-25)
 
 ### Feat
