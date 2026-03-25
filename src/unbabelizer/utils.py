@@ -128,6 +128,10 @@ def get_base_type(ann: Any) -> Any:
         if len(non_none_args) == 1:
             return get_base_type(non_none_args[0])
 
+    if origin in (list, Sequence, tuple):
+        elem = getattr(ann, "__args__", (str,))[0]
+        return get_base_type(elem)
+
     if origin is Literal or origin is LiteralString:
         return type(ann.__args__[0])  # pyright: ignore[reportUnknownVariableType]
 
