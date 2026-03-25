@@ -1,3 +1,9 @@
+## v1.2.8 (2026-03-25)
+
+### Feat
+
+- noninteractive mode with store_action true flag
+
 ## v1.2.7 (2026-03-25)
 
 ### Feat
