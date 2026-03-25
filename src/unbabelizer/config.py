@@ -252,23 +252,39 @@ class Config(Presets):
             )
             if choices is not None and not isinstance(choices, list):
                 choices = [choices]  # pyright: ignore[reportUnknownVariableType]
+
+            # Build argparse kwargs, but use store_true for boolean flags (no argument expected)
+            base_type = get_base_type(field.annotation)
+            help_text = (
+                (field.description or "")
+                + (
+                    " "
+                    + _('(overrides pyproject.toml setting: "{config_field}")').format(
+                        config_field=config_field  # pyright: ignore[reportUnknownArgumentType]
+                    )
+                )
+                if config_field
+                else ""
+            )
+
+            arg_kwargs: Dict[str, Any] = {
+                "help": help_text,
+                "default": None,
+                "nargs": nargs,
+                "choices": choices,  # pyright: ignore[reportUnknownArgumentType]
+            }
+
+            if base_type is bool:
+                arg_kwargs.pop("nargs", None)
+                arg_kwargs.pop("choices", None)
+                arg_kwargs["action"] = "store_true"
+                arg_kwargs["default"] = None
+            else:
+                arg_kwargs["type"] = base_type
+
             parser.add_argument(
                 flag,  # pyright: ignore[reportArgumentType]
-                help=(
-                    (field.description or "")
-                    + (
-                        " "
-                        + _('(overrides pyproject.toml setting: "{config_field}")').format(
-                            config_field=config_field  # pyright: ignore[reportUnknownArgumentType]
-                        )
-                    )
-                    if config_field
-                    else ""
-                ),
-                default=None,
-                nargs=nargs,  # pyright: ignore[reportArgumentType]
-                type=get_base_type(field.annotation),
-                choices=choices,  # pyright: ignore[reportUnknownArgumentType]
+                **{k: v for k, v in arg_kwargs.items() if v is not None},
             )
 
         parsed_args = parser.parse_args(args)
