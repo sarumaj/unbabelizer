@@ -264,7 +264,7 @@ class Config(Presets):
                     )
                 )
                 if config_field
-                else ""
+                else (field.description or "")
             )
 
             arg_kwargs: Dict[str, Any] = {
@@ -284,6 +284,7 @@ class Config(Presets):
 
             parser.add_argument(
                 flag,  # pyright: ignore[reportArgumentType]
+                dest=name,
                 **{k: v for k, v in arg_kwargs.items() if v is not None},
             )
 
