@@ -16,7 +16,7 @@ dependencies = [
   "jmespath==1.1.0",
   "polib==1.2.0",
   "pydantic==2.13.4",
-  "textual==8.2.7",
+  "textual==8.2.8",
 ]
 description = "A CLI tool to translate gettext .po files."
 keywords = ["translation", "google translate", "po files"]
