@@ -15,7 +15,7 @@ dependencies = [
   "deep-translator==1.11.4",
   "jmespath==1.1.0",
   "polib==1.2.0",
-  "pydantic==2.13.4",
+  "pydantic==2.13.5",
   "textual==8.2.8",
 ]
 description = "A CLI tool to translate gettext .po files."
