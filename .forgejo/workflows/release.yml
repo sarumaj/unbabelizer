@@ -1,0 +1,142 @@
+# Converted from .github/workflows/release.yml for Forgejo by
+# scripts/github_to_forgejo.py (HomeLab); --move-ci rewrites it. Jobs needing
+# GitHub, macOS, Windows or secrets Forgejo lacks stay in the GitHub file.
+name: release
+'on':
+  workflow_dispatch: null
+  push:
+    tags:
+    - v*
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: https://github.com/actions/checkout@v7
+      with:
+        fetch-depth: 0
+        lfs: true
+    - name: Import GPG key
+      id: import_gpg
+      uses: https://github.com/crazy-max/ghaction-import-gpg@v7
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        git_user_signingkey: true
+        git_commit_gpgsign: true
+        git_push_gpgsign: false
+        trust_level: 4
+    - name: Set up Python
+      uses: https://github.com/actions/setup-python@v7
+      with:
+        python-version: '3.15'
+    - name: Extract version from tag
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [[ -z "$TAG" ]]; then
+            echo "❌ No tags found in repository. Please create a tag first."
+            exit 1
+          fi
+          echo "✅ Using latest tag for manual dispatch: $TAG"
+        else
+          TAG="${GITHUB_REF#refs/tags/}"
+          echo "✅ Using tag from push event: $TAG"
+        fi
+
+        if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+.*$ ]]; then
+          echo "❌ Invalid tag format: $TAG (expected: v1.2.3 or similar)"
+          exit 1
+        fi
+
+        VERSION="${TAG#v}"
+        echo "🏷️ Tag: $TAG"
+        echo "📦 Version: $VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "TAG=$TAG" >> $GITHUB_ENV
+    - name: Update version
+      run: |
+        sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
+      shell: bash
+    - name: Update changelog with commitizen
+      run: |
+        pip install commitizen
+
+        if [[ "${{ github.event_name }}" == "push" ]]; then
+          DEFAULT_BRANCH="${GITHUB_REF#refs/heads/}"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
+          fi
+          echo "🔄 Switching from detached HEAD to $DEFAULT_BRANCH branch..."
+          git checkout $DEFAULT_BRANCH
+          git pull origin $DEFAULT_BRANCH
+        fi
+
+        cz changelog
+
+        if git diff --quiet && git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git add CHANGELOG.md pyproject.toml
+          echo "✅ Committing changes with GPG signing..."
+          git commit -S -m "chore: update changelog and version for $VERSION"
+          git push
+        fi
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Cache pip packages
+      uses: https://github.com/actions/cache@v6
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+        pip install -e .
+        pip uninstall -y unbabelizer
+    - name: Build package
+      run: python -m build
+    - name: Publish package
+      uses: https://github.com/pypa/gh-action-pypi-publish@v1.14.2
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_TOKEN }}
+        skip-existing: true
+    - name: Collect the release files
+      shell: bash
+      run: |
+        mkdir -p .forgejo-release
+    - name: Write the release notes
+      id: release_notes
+      shell: bash
+      env:
+        TAG: ${{ env.TAG }}
+      run: |
+        if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+          git fetch --quiet --unshallow --tags
+        else
+          git fetch --quiet --tags
+        fi
+        previous=$(git describe --tags --abbrev=0 "$TAG^" 2>/dev/null || true)
+        {
+          echo 'notes<<END_OF_NOTES'
+          git log --no-merges --format='- %s' ${previous:+"$previous.."}"$TAG"
+          echo END_OF_NOTES
+        } >> "$GITHUB_OUTPUT"
+    - name: Publish the release
+      uses: https://code.forgejo.org/actions/forgejo-release@v2
+      with:
+        direction: upload
+        url: ${{ github.server_url }}
+        repo: ${{ github.repository }}
+        tag: ${{ env.TAG }}
+        title: ${{ env.TAG }}
+        release-dir: .forgejo-release
+        prerelease: 'false'
+        override: false
+        release-notes: ${{ steps.release_notes.outputs.notes }}
