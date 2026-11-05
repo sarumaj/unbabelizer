@@ -49,35 +49,6 @@ jobs:
       run: |
         sed -i "s/^version = .*/version = \"$VERSION\"/" pyproject.toml
       shell: bash
-    - name: Update changelog with commitizen
-      run: |
-        pip install commitizen
-
-        if [[ "${{ github.event_name }}" == "push" ]]; then
-          DEFAULT_BRANCH="${GITHUB_REF#refs/heads/}"
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
-          fi
-          echo "🔄 Switching from detached HEAD to $DEFAULT_BRANCH branch..."
-          git checkout $DEFAULT_BRANCH
-          git pull origin $DEFAULT_BRANCH
-        fi
-
-        cz changelog
-
-        if git diff --quiet && git diff --cached --quiet; then
-          echo "No changes to commit"
-        else
-          git add CHANGELOG.md pyproject.toml
-          git config user.name "forgejo-actions"
-          git config user.email "noreply@ciepiela.org"
-          echo "✅ Committing changes..."
-          git commit -m "chore: update changelog and version for $VERSION"
-          git push
-        fi
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Cache pip packages
       uses: https://github.com/actions/cache@v6
       with:
