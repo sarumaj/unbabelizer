@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD041 -->
 
-[![release](https://github.com/sarumaj/unbabelizer/actions/workflows/release.yml/badge.svg)](https://github.com/sarumaj/unbabelizer/actions/workflows/release.yml)
-[![GitHub Release](https://img.shields.io/github/v/release/sarumaj/unbabelizer?logo=github)](https://github.com/sarumaj/unbabelizer/releases/latest)
+[![test](https://git.ciepiela.org/dawid/unbabelizer/actions/workflows/test.yml/badge.svg)](https://git.ciepiela.org/dawid/unbabelizer/actions?workflow=test.yml)
+[![Release](https://img.shields.io/gitea/v/release/dawid/unbabelizer?gitea_url=https%3A%2F%2Fgit.ciepiela.org&logo=forgejo)](https://git.ciepiela.org/dawid/unbabelizer/releases/latest)
 [![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/sarumaj/unbabelizer)](https://github.com/sarumaj/unbabelizer/blob/main/pyproject.toml)
 
 ---
