@@ -1,3 +1,15 @@
+## 1.3.1 - 2026-11-09
+
+### Fixed
+
+- get rid of gpg sign key
+
+### Dependencies
+
+- update dependency pydantic to v2.14.3
+- update dependency textual to v8.2.8 (#31)
+- update all non-major dependencies (#26)
+
 ## v1.3.0 (2026-03-25)
 
 ### Feat
