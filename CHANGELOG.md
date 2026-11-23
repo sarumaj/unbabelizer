@@ -1,3 +1,9 @@
+## 1.3.2 - 2026-11-23
+
+### Dependencies
+
+- update dependency pydantic to v2.14.4
+
 ## 1.3.1 - 2026-11-09
 
 ### Fixed
